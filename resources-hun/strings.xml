@@ -1,0 +1,7 @@
+<strings>
+    <string id="fieldLabel">sebesség</string>
+    <string id="distanceLabel">táv</string>
+    <string id="timerLabel">idő</string>
+    <string id="avgSpeedLabel">átl.</string>
+    <string id="cadenceLabel">pedál</string>
+</strings>

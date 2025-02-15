@@ -1,0 +1,6 @@
+<resources>
+    <font id="largeSpeedFont" filename="fonts/garminrobo-56.fnt" filter="-.:0123456789"  antialias="true"/>
+    <font id="smallNumFont" filename="fonts/garminrobo-32.fnt" filter=",-.:0123456789"  antialias="true"/>
+    <jsonData id="SimulatorFontPaddings">{ "EN": [3, 4, 5, 5, 9, 9, 9, 13, 16] }</jsonData>
+    <jsonData id="DeviceFontPaddings">{ "EN": [0, 0, 0, 0, 0, 5, 6, 8, 11] }</jsonData>
+</resources>

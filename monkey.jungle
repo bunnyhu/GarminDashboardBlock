@@ -1,0 +1,5 @@
+project.manifest = manifest.xml
+
+# Eszközön s, szimuban d
+excludeBase=d
+base.excludeAnnotations = $(excludeBase)

@@ -1,0 +1,40 @@
+<!-- Edge 1000 / Explore/2 240x400 -->
+<layouts>    
+    <layout id="layout2x2">
+        <!-- 240x156 -->
+        <drawable class="Background" />
+        <label id="fieldLabel" x="center" y="4" color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_CENTER"/>
+        <label id="speed" x="center" y="5" color="Graphics.COLOR_BLACK" justification="Graphics.TEXT_JUSTIFY_CENTER" font="@Fonts.largeSpeedFont" />
+        <label id="avgSpLabel" x="10" y="100" color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_LEFT" />
+        <label id="cadLabel" x="230" y="100" color="Graphics.COLOR_DK_GRAY" justification="Graphics.TEXT_JUSTIFY_RIGHT" />
+        <label id="avgSpeed" x="5" y="115" color="Graphics.COLOR_GREEN" justification="Graphics.TEXT_JUSTIFY_LEFT" />
+        <label id="cadence" x="235" y="115" color="Graphics.COLOR_GREEN" justification="Graphics.TEXT_JUSTIFY_RIGHT" />
+        <bitmap id="slopeIcon" x="212" y="2" filename="drawables/slope_icon2_20x15.png" />
+        <label id="slope" x="235" y="20"  justification="Graphics.TEXT_JUSTIFY_RIGHT"/>
+    </layout>
+    <layout id="layout2x1">
+        <!-- 240x78 -->
+        <drawable class="Background" />
+        <label id="speed" x="5" y="5" color="Graphics.COLOR_BLACK" justification="Graphics.TEXT_JUSTIFY_LEFT"/>
+        <bitmap id="slopeIcon" x="5" y="55" filename="drawables/slope_icon2_20x15.png" />
+        <label id="slope" x="30" y="52" color="Graphics.COLOR_GREEN" justification="Graphics.TEXT_JUSTIFY_LEFT"/>
+        <label id="distance" x="215" y="2" color="Graphics.COLOR_GREEN" justification="Graphics.TEXT_JUSTIFY_RIGHT" />        
+        <label id="timer" x="215" y="26" color="Graphics.COLOR_GREEN" justification="Graphics.TEXT_JUSTIFY_RIGHT" />
+        <label id="cadence" x="215" y="51" color="Graphics.COLOR_GREEN" justification="Graphics.TEXT_JUSTIFY_RIGHT" />
+        <!-- <drawable class="Ui.Text" id="teszt">
+            <param name="locX">dc.getWidth() * .5</param>
+            <param name="locY">dc.getHeight() * .5</param>
+            <param name="justification">Gfx.TEXT_JUSTIFY_CENTER</param>
+            <param name="text">"teszt"</param>
+        </drawable> -->
+    </layout>
+    <layout id="layout1x1">
+        <!-- 119x78 -->
+        <drawable class="Background" />
+        <label id="speed" x="2" y="2" color="Graphics.COLOR_BLACK" justification="Graphics.TEXT_JUSTIFY_LEFT" />
+        <label id="distance" x="2" y="26" color="Graphics.COLOR_BLACK" justification="Graphics.TEXT_JUSTIFY_LEFT" />        
+        <label id="timer" x="2" y="51" color="Graphics.COLOR_BLACK" justification="Graphics.TEXT_JUSTIFY_LEFT" />
+    </layout>
+</layouts>
+<!-- Edge 1030 etc 282x470 -->
+<!-- Edge 1050 480x800 -->
