@@ -12,11 +12,10 @@ import Toybox.UserProfile;
 
     author: Karoly Szabo (Bunny)
     version: 1.0
-    release: 2024. febr. 14.
-    https://github.com/bunnyhu/garminCombiDF
+    release: 2024. febr. 15.
+    https://github.com/bunnyhu/BunnySpeedField
 */
 class BunnySpeedFieldView extends WatchUi.DataField {
-    
     private var _sensors as {   // Actual sensors datas set by compute()
         :speed as Number,
         :avgSpeed as Number,
@@ -30,48 +29,29 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _speedMod = 1;  // speed multiplier km/mi
     private var _units as Array;    // unit strings [dist, speed]
     private var _paddings;          // Simu/Device padding
+    private var _imgVRainbowBar;    // heart rate bar
+    private var _iconFont;          // data icons
+    private var _directionTexts;        // compass direction texts
     private var _lastBackground = -1;
     private var _layout as String = "2x2";
-    private var _imgVRainbowBar;    // heart rate bar
-    private var _imgDTCIcons;          // icons 2x1
     // 128,153,179,204,230,255
     private var _hrZones as Array = []; // heartRate Zones
     private var _hrPixel as Float = 3.00f;   // 1 HR pulse pixel
+    private var _heartVisible as Number = 0;
+
 
     // FONT_MEDIUM = gyári label, FONT_NUMBER_MEDIUM = 2 soros szám, FONT_NUMBER_HOT gyári számméret
     // type: 0=labelColor, 1=textColor, other=nochange
-    private var _labelNames as Dictionary = {
-        "2x2" => [
-            {"id" => "fieldLabel", "font" => Graphics.FONT_SYSTEM_SMALL, "type"=>0},
-            {"id" => "rpmLabel", "font" => Graphics.FONT_SYSTEM_SMALL, "type"=>0},
-            {"id" => "avgLabel", "font" => Graphics.FONT_SYSTEM_SMALL, "type"=>0},
-            {"id" => "cadence", "font" => Graphics.FONT_NUMBER_HOT, "type"=>1},
-            {"id" => "avgSpeed", "font" => Graphics.FONT_NUMBER_HOT, "type"=>1},
-            {"id" => "slope", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-        ],
-        "2x1" => [
-            {"id" => "speed", "font" => Graphics.FONT_NUMBER_HOT, "type"=>1},
-            {"id" => "distance", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "timer", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "cadence", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "slope", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "teszt", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>0},
-        ],
-        "1x1" => [
-            {"id" => "speed", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "distance", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "timer", "font" => Graphics.FONT_SYSTEM_NUMBER_MILD, "type"=>1},
-            {"id" => "cadence", "font" => Graphics.FONT_NUMBER_HOT, "type"=>1},
-        ]
-    };
-    private var _hrColors as Array = [  // heart rate colors
-        Graphics.COLOR_LT_GRAY, // min zone 1
-        Graphics.COLOR_BLUE,    // max zone 2
-        Graphics.COLOR_GREEN,   // max zone 3
-        Graphics.COLOR_YELLOW,  // max zone 4
-        Graphics.COLOR_RED,     // max zone 5
-        Graphics.COLOR_PURPLE,  // max over
-    ];  
+    private var _labelDatas as Array = [        
+        "speed", "distance", "timer", "cadence", "avgSpeed", "slope", "hrIcon",
+    ];
+    private var _alignLabels as Array = [
+        "fieldLabel", "cadLabel", "avgSpLabel", "compLabel",
+    ];
+    private var _labelIcons as Array = [
+        "slopeIcon", "distanceIcon", "timerIcon", "cadenceIcon", "speedIcon",
+    ];
+  
     private var _gradientData = [   // slope
         0f,    // 0. Altitude last estimate
         0f,    // 1. Altitude kalman gain
@@ -115,13 +95,14 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         _paddings = getPaddings();
         if ( System.getDeviceSettings().distanceUnits == System.UNIT_METRIC) {
             _speedMod = 3.6;
-            _units = ["km", "km/h"];
+            _units = ["km", "km/h", "C", "D"];
         } else {
             _speedMod = 2.23694;
-            _units = ["mi", "mi/h"];
+            _units = ["mi", "mi/h", "F", "E"];
         }
         _imgVRainbowBar = Application.loadResource( Rez.Drawables.imageVRainbowBar ) as BitmapResource;
-        _imgDTCIcons = Application.loadResource( Rez.Drawables.DTCIcons ) as BitmapResource;
+        _iconFont = Application.loadResource( Rez.Fonts.bikeDataIconFont ) as FontResource;
+        _directionTexts = Application.loadResource( Rez.JsonData.directionText ) as Array;
     }
 
 
@@ -176,15 +157,21 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             (View.findDrawableById("cadLabel") as Text).setText( 
                 WatchUi.loadResource(Rez.Strings.cadenceLabel) as String
             );
-        }     
-        // realign all text if need
-        for (var f=0; f<_labelNames[_layout].size(); f++) {
-            var elem = findDrawableById(_labelNames[_layout][f]["id"]) as Text;
-            if (elem) {
-                reAlign(elem, _labelNames[_layout][f]["font"]);
-            }
         }
-        
+        if (View.findDrawableById("distanceIcon")) {
+            (View.findDrawableById("distanceIcon") as Text).setText(_units[2]);
+        }
+        if (View.findDrawableById("speedIcon")) {
+            (View.findDrawableById("speedIcon") as Text).setText(_units[3]);
+        }
+
+        // realign all text where need
+        for (var f=0; f<_alignLabels.size(); f++) {
+            var elem = findDrawableById(_alignLabels[f]) as Text;
+            if (elem) {
+                reAlign(elem);
+            }
+        }        
     }
 
     /* 
@@ -210,9 +197,10 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             _sensors[:hr] = info.currentHeartRate;
         }
         if (info.currentHeading != null) {
-            _sensors[:heading] = info.currentHeading;
+            // 0 is north. -PI/2 radians (90deg CCW) is west, and +PI/2 radians (90deg CW) is east.
+            _sensors[:heading] = (info.currentHeading < 0) ? 360.0 + Math.toDegrees(info.currentHeading) : Math.toDegrees(info.currentHeading);
         }
-        _sensors[:slope] = Math.round(computeGradient(info));        
+        _sensors[:slope] = computeGradient(info);        
     }
 
 
@@ -225,7 +213,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
 
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
             numColor = Graphics.COLOR_WHITE;
-            labelColor = Graphics.COLOR_LT_GRAY;
+            labelColor = Graphics.COLOR_DK_GRAY;
         } else {
             numColor = Graphics.COLOR_BLACK;
             labelColor = Graphics.COLOR_LT_GRAY;
@@ -234,14 +222,23 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if (_lastBackground != getBackgroundColor()) {
             (View.findDrawableById("Background") as Text).setColor(getBackgroundColor());
 
-            for (var f=0; f<_labelNames[_layout].size(); f++) {
-                var elem = findDrawableById(_labelNames[_layout][f]["id"]) as Text;
+            for (var f=0; f<_alignLabels.size(); f++) {
+                var elem = findDrawableById(_alignLabels[f]) as Text;
                 if (elem) {
-                    if (_labelNames[_layout][f]["type"] == 0) {
-                        elem.setColor(labelColor);
-                    } if (_labelNames[_layout][f]["type"] == 1) {
-                        elem.setColor(numColor);
-                    }
+                    elem.setColor(labelColor);
+                }
+            }
+            for (var f=0; f<_labelIcons.size(); f++) {
+                var elem = findDrawableById(_labelIcons[f]) as Text;
+                if (elem) {
+                    elem.setColor(labelColor);
+                }
+            }
+
+            for (var f=0; f<_labelDatas.size(); f++) {
+                var elem = findDrawableById(_labelDatas[f]) as Text;
+                if (elem) {
+                    elem.setColor(numColor);
                 }
             }
         }
@@ -281,7 +278,20 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         } else if (_layout.equals("2x1")) {
             setNumData("slope", _sensors[:slope].format("%0.1f"));
         }
-        
+        elem = findDrawableById("dirLabel") as Text;
+        if (elem) {
+            elem.setText(_sensors[:heading].format("%1d"));
+        }
+
+        elem = findDrawableById("compass") as Text;
+        if (elem) {
+            elem.setText(drawHeading(_sensors[:heading]).format("%1d"));
+        }
+        elem = findDrawableById("compLabel") as Text;
+        if (elem) {
+            elem.setText(_directionTexts[drawHeading(_sensors[:heading])]);
+        }
+
         View.onUpdate(dc);  // !!!!!!
 
         if (_layout.equals("2x2")) {
@@ -289,10 +299,8 @@ class BunnySpeedFieldView extends WatchUi.DataField {
                 :x => 1,
                 :y => 1,
                 :hr => _sensors[:hr],
-            });
-            drawHeading(dc, _sensors[:heading]);
-        } else if (_layout.equals("2x1")) {
-           dc.drawBitmap( 219, 0, _imgDTCIcons ); 
+                :icon => "hrIcon",
+            });            
         }
 
         // drawRuler(dc);
@@ -324,17 +332,11 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     }
     
     /* 
-        Edge/szimu padding miatti font Y korrigálás
+        Edge/szimu font Y padding realign
     */
-    function reAlign(item as Text, font as Number) {        
-            var _fontId = font;
-            if (font > 8) {      // SYSTEM fonts
-                _fontId = font-9;
-            }
-            if (_fontId < 9) {  // align only under FONT_GLANCE
-                item.locY = item.locY - _paddings["EN"][_fontId];
-            }
-            item.setFont(font as Graphics.FontType);
+    function reAlign(item as Text) {            
+            var _font = Graphics.FONT_SYSTEM_SMALL - 9; // SYSTEM fonts -9 !!!
+            item.locY = item.locY - _paddings["EN"][_font];
     }
 
     /* 
@@ -407,6 +409,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         return gradientData[10];
     }
 
+
     /*
         GradeDataField
         @author maca88
@@ -426,6 +429,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         gradientData[index] = currentEstimate; // Update last estimate
         return currentEstimate;
     }    
+
 
     /*
         Show text if avaiable       
@@ -448,12 +452,9 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if (hr == null) {
             hr = 0;
         }
-
         // balcsi kör
-        // 87,103,121,138,156,180
-        // 87-103,104-121,122-138,139-156,157<
-        // Garmin min: 65 max: 181
-        // 91-108, 109-126, 127-144, 145-162, 163-180, 
+        // 87,103,121,138,156,180         87-103, 104-121, 122-138, 139-156, 157<
+        // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180, 
         if (hr > _hrZones[5]) {
             hr = _hrZones[5];
         } else if (hr < _hrZones[0]) {
@@ -462,12 +463,26 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         dc.setColor(getBackgroundColor(), Graphics.COLOR_TRANSPARENT);
         dc.drawBitmap(options[:x], options[:y], _imgVRainbowBar);
         dc.fillRectangle(options[:x], options[:y], 10, Math.floor(_hrPixel * (_hrZones[5]-hr) ));
+        _heartVisible ++;
+        if (_heartVisible > 2) {
+            dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(8, options[:y]-12+Math.floor(_hrPixel * (_hrZones[5]-hr) ), _iconFont, "H", Graphics.TEXT_JUSTIFY_LEFT);
+        }
+        if (_heartVisible > 4) {
+            _heartVisible = 0;
+        }
     }
 
-    // WIP
-    function drawHeading(dc as Dc, pHeadingValue) {
-
+    /* 
+        Get compass arrow number
+        @see compassIconFont
+    */
+    function drawHeading(pHeadingValue) as Number {
+        var dir = pHeadingValue;
+        dir = Math.round(dir / 45);
+        return dir.toNumber();
     }
+
 
     /* 
         Vonalzó kirajzolás dev alatt pozícionáláshoz
@@ -484,5 +499,4 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             }
         }        
     }
-
 }

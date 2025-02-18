@@ -1,7 +1,8 @@
-<strings>
-    <string id="fieldLabel">sebesség</string>
+<resources>
+    <string id="fieldLabel">tempó</string>
     <string id="distanceLabel">táv</string>
     <string id="timerLabel">idő</string>
     <string id="avgSpeedLabel">átl.</string>
     <string id="cadenceLabel">pedál</string>
-</strings>
+    <jsonData id="directionText">["É", "ÉK", "K", "DK", "D", "DNY", "NY", "ÉNY", "É"]</jsonData>
+</resources>
