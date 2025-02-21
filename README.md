@@ -15,7 +15,7 @@ For me, this is the format that displayed on my main training screen.
 * current pedal cadence
 * percentage of climb/slope (calculated from the measured altitude data)
 * colourized heart rate zones
-* simple compass
+* simple compass / radar warning 
 
 **colour marking of the current speed** Green if the current speed is the same or faster than the average speed. Yellow if it is slower but not more than 1km/h or 1Mi/h, and orange if it is even slower than that.
 
@@ -48,5 +48,14 @@ https://github.com/bunnyhu/BunnySpeedField
 ## History
 v1.0 
 
-> [!NOTE]
-> *You may ask the legitimate question, why is it only compatible with Edge Explore 2? Well, Garmin gives the developers a pretty good simulator that is supposed to know all your devices, but the accuracy of the display is quite poor. The size of the letters and numbers are different, their positioning is not the same so designing a face calculated to such a pixel for a device I don't physically own is near impossible. Since I only have Explore 2, I could set up exactly what goes where and how it appears.*
+## Q&A
+### Why this data and not ...
+First I want to put together the most important informations, like timer, distance, etc. Then I realize the refreshing timer have a little bit shifting between the factory datafield and the custom made. Not much, but that delay is really annoying when one data change a bit later than the others. This is why I choice some important (for me!) but not every second changing data. Also because they are not "life saver" important informations, I can use smaller number or not precise presentations and put more data to the same place.
+### Why those devices, I need it for ...
+Well, Garmin gives the developers a pretty good simulator that is supposed to know all your devices, but the accuracy of the display is quite poor. The size of the letters and numbers are different, their positioning is not the same, so designing a face calculated to such a pixel for a device I don't physically own is near impossible. Since I only have Explore 2 and my friend have 1040 - I could set up exactly what goes where and how it appears only those devices. 
+### I really like this on my device / my language
+No problem, feel free to redesign for your device, the source code is avaiable on GitHub and no need programming (but the VSC).
+Check the *resources* folder and folders start with *resources-* what you need to tailoring. Make the folder that you need and modify the xml files then compile it. 
+* https://developer.garmin.com/connect-iq/connect-iq-basics/getting-started/
+* https://developer.garmin.com/connect-iq/reference-guides/devices-reference/
+* https://developer.garmin.com/connect-iq/core-topics/resources/

@@ -1,10 +1,10 @@
 <resources>
     <string id="AppName" translatable="false">Bunny`s extended Speed</string>
-    <font id="largeSpeedFont" filename="fonts/garminrobo-56.fnt" filter="-.:0123456789"  antialias="true"/>
-    <font id="mediumNumFont" filename="fonts/garminrobo-32.fnt" filter=",-.:0123456789"  antialias="true"/>
-    <font id="smallNumFont" filename="fonts/garminrobo-22.fnt" filter=",-.:0123456789"  antialias="true"/>
+    <font id="largeSpeedFont" filename="fonts/garminrobo-56.fnt" filter="()-.:0123456789"  antialias="true"/>
+    <font id="mediumNumFont" filename="fonts/garminrobo-32.fnt" filter="(),-.:0123456789"  antialias="true"/>
+    <font id="smallNumFont" filename="fonts/garminrobo-22.fnt" filter="(),-.:0123456789"  antialias="true"/>
     <font id="bikeDataIconFont" filename="fonts/bikedataicons.fnt" filter="ABCDEFGH" antialias="true"/>
     <font id="compassIconFont" filename="fonts/compicons.fnt" filter="012345678" antialias="true"/>
-    <jsonData id="SimulatorFontPaddings">{ "EN": [0, 0, 0, 0, 0, 0, 0, 0, 0] }</jsonData>
-    <jsonData id="DeviceFontPaddings">{ "EN": [0, 0, 0, 0, 0, 0, 0, 0, 0] }</jsonData>
+    <jsonData id="SimulatorFontPaddings">[0, 0, 0, 0, 0, 0, 0, 0, 0]</jsonData>
+    <jsonData id="DeviceFontPaddings">[0, 0, 0, 0, 0, 0, 0, 0, 0]</jsonData>
 </resources>

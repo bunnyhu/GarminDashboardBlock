@@ -4,18 +4,19 @@
     <layout id="layout2x2">
         <!-- 240x156 -->
         <drawable class="Background" />
-        <label id="fieldLabel" x="center" y="4" justification="Graphics.TEXT_JUSTIFY_CENTER"/>
-        <label id="avgSpLabel" x="5" y="102" justification="Graphics.TEXT_JUSTIFY_LEFT" />
+        <label id="fieldLabel" x="center" y="4" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_SMALL"/>
+        <label id="avgSpLabel" x="5" y="102" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_SMALL"/>
+        <label id="cadLabel" x="215" y="102" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL"/>
         <label id="cadenceIcon" x="235" y="95" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="A"/>
-        <label id="cadLabel" x="215" y="102" justification="Graphics.TEXT_JUSTIFY_RIGHT" />
-        <label id="compLabel" x="129" y="102" justification="Graphics.TEXT_JUSTIFY_CENTER" />
         <label id="speed" x="center" y="25" justification="Graphics.TEXT_JUSTIFY_CENTER" font="@Fonts.largeSpeedFont" />
         <label id="avgSpeed" x="5" y="120" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.mediumNumFont"/>
         <label id="cadence" x="235" y="120" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.mediumNumFont"/>
         <label id="slopeIcon" x="235" y="-4" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="G"/>
         <label id="slope" x="235" y="20"  justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
-        <bitmap id="compCircle" x="110" y="117" filename="drawables\compass_circle_38.png" />
-        <label id="compass" x="110" y="118" color="Graphics.COLOR_RED" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.compassIconFont" text="0"/>
+        <drawable class="RadarCompass" id="multiCompass">
+            <param name="locX">110</param>
+            <param name="locY">102</param>
+        </drawable>
     </layout>
     <layout id="layout2x1">
         <!-- 240x78 -->
@@ -29,12 +30,6 @@
         <label id="distanceIcon" x="235" y="0" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="C"/>
         <label id="timerIcon" x="235" y="25" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="B"/>
         <label id="cadenceIcon" x="235" y="50" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="A"/>
-        <!-- <drawable class="Ui.Text" id="teszt">
-            <param name="locX">dc.getWidth() * .5</param>
-            <param name="locY">dc.getHeight() * .5</param>
-            <param name="justification">Gfx.TEXT_JUSTIFY_CENTER</param>
-            <param name="text">"teszt"</param>
-        </drawable> -->
     </layout>
     <layout id="layout1x1">
         <!-- 119x78 -->

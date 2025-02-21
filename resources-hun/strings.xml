@@ -4,5 +4,8 @@
     <string id="timerLabel">idő</string>
     <string id="avgSpeedLabel">átl.</string>
     <string id="cadenceLabel">pedál</string>
-    <jsonData id="directionText">["É", "ÉK", "K", "DK", "D", "DNY", "NY", "ÉNY", "É"]</jsonData>
+    <string id="N">É</string>
+    <string id="W">NY</string>
+    <string id="E">K</string>
+    <string id="S">D</string>
 </resources>
