@@ -57,23 +57,55 @@ class RadarCompass extends WatchUi.Drawable {
     }
 
     function setOptions(options) {
-        if (options[:sensors]!=null) { sensors = options[:sensors]; }
-        if (options[:color]!=null) { color = options[:color]; }
-        if (options[:background]!=null) { background = options[:background]; }
+        if ( options[:sensors]!=null ) { sensors = options[:sensors]; }
+        if ( options[:color]!=null ) { color = options[:color]; }
+        if ( options[:background]!=null ) { background = options[:background]; }
     }
 
     /* 
         Get compass 45° direction number, 0 - North CW
     */
     function getDirection(pHeadingValue) as Number {
-        return Math.round(pHeadingValue / 45).toNumber();
+        var r = Math.round(pHeadingValue / 45).toNumber();
+        // if (r>7) { r = r-8; }
+        return r % 8;
     }
+
+    // /*
+    //     Convert wind bearing to Arc array
+    // */
+    // function cDA( wind , heading ) as Dictionary {
+    //     var center = wind + 90;
+    // }
 
     /*
         The wind bearing in degrees. North = 0, East = 90, South = 180, West = 270
     */
-    function getWindArc(pWind) as Array {
-        return [];
+    function getWindArc( pWind, pHeading ) as Dictionary {
+        var _arcHalfDegree = 23;
+        var _arcMargin = 12;
+        // var _north = 360-pHeading;
+        // var _wind = pWind - pHeading;
+        // if (_wind < 0) {
+        //     _wind += 360;
+        // }
+        var _wind = getDirection(pWind.toFloat()) - getDirection(pHeading.toFloat());
+        if (_wind < 0) {
+            _wind += 8;
+        }
+
+        var _arc = [90, 45, 0, 315, 270, 225, 180, 135, 90];
+        var _center = _arc[ _wind ];
+
+        var result = [_center-_arcHalfDegree-_arcMargin, _center+_arcHalfDegree+_arcMargin, _center-_arcHalfDegree, _center+_arcHalfDegree];
+        for (var f=0; f<result.size(); f++) {
+            if (result[f] < 0) {
+                result[f] = 360 + result[f];
+            } else if (result[f]>360) {
+                result[f] = result[f] - 360;
+            }
+        }
+        return {:cb=>result[0], :ce=>result[1], :wb=>result[2], :we=>result[3]};
     }
 
     /*
@@ -109,16 +141,15 @@ class RadarCompass extends WatchUi.Drawable {
             } else {
                 dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
             }
-            // sensors[:windDir] = 100;
-            // sensors[:windSpeed] = 1.03f;
-            if ((sensors[:windDir] != null) && sensors[:windSpeed] != null) {
-                var windArc = getWindArc(getDirection(sensors[:windDir]));
+
+            if (sensors[:windDir] != null) {
+                var windArc = getWindArc(sensors[:windDir], sensors[:heading]);
 
                 dc.setPenWidth(2);
-                dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_CLOCKWISE , 345, 60);
+                dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_CLOCKWISE , windArc[:cb], windArc[:ce]);
                 dc.setPenWidth(6);
                 dc.setColor(Graphics.COLOR_PURPLE, background);
-                dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_COUNTER_CLOCKWISE , 0, 45);
+                dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_COUNTER_CLOCKWISE , windArc[:wb], windArc[:we]);
             } else {
                 dc.setPenWidth(2);
                 dc.drawCircle(locX+19, locY+19+15, 16);

@@ -7,7 +7,7 @@ import Toybox.UserProfile;
 import Toybox.Sensor;
 import Toybox.Ant;
 import Toybox.AntPlus;
-import Toybox.Weather;
+
 
 class MyBikeRadarListener extends AntPlus.BikeRadarListener {
     var targets = null;
@@ -48,6 +48,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _imgVRainbowBar;    // heart rate bar
     private var _iconFont;          // data icons
     private var _padding;           // Simu/Device padding
+    private var _weather;           // Weather function class
 
     private var _sensors;           // Actual sensors datas set by compute() and resetSensors()
     private var _hrZones as Array = [];     // heartRate Zones
@@ -103,7 +104,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     }
 
     function initialize() {
-        DataField.initialize();
+        DataField.initialize();        
         resetSensors();
         _hrZones = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
         if (_hrZones.size() != 6 ) {
@@ -121,6 +122,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             _speedMod = 2.23694;
             _units = ["mi", "mi/h", "F", "E"];
         }
+        _weather = new MyWeather();
         _imgVRainbowBar = Application.loadResource( Rez.Drawables.imageVRainbowBar ) as BitmapResource;
         _iconFont = Application.loadResource( Rez.Fonts.bikeDataIconFont ) as FontResource;
     }
@@ -163,7 +165,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         // realign all text where need
         for (var f=0; f<_alignText.size(); f++) {
             var elem = findDrawableById(_alignText[f]) as Text;
-            if (elem) {
+            if (elem != null) {
                 _padding.reAlign(elem);
             }
         } 
@@ -207,6 +209,11 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             _sensors[:carSpeed] = Math.round(_sensors[:carRelSpeed] + _sensors[:speed]);
         }
 
+        if (_weather.get(info)) {            
+            var _wind = _weather.getWind();
+            _sensors[:windDir] = _wind[:dir];
+            _sensors[:windSpeed] = _wind[:speed];
+        }
         
     }
 
@@ -233,7 +240,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         for (var c=0; c<colors.size(); c++) {
             for (var f=0; f<colors[c][0].size(); f++) {
                 var elem = findDrawableById(colors[c][0][f]) as Text;
-                if (elem) {
+                if (elem != null) {
                     elem.setColor(colors[c][1]);
                 }
             }
@@ -251,7 +258,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if (_layout.equals("2x2")) {
             setDrawableText("slope", Math.round(_sensors[:slope]).format("%0.0f"));
 
-            if (View.findDrawableById("multiCompass")) {
+            if (View.findDrawableById("multiCompass") != null) {
                 (View.findDrawableById("multiCompass") as RadarCompass).setOptions({
                     :color => numColor,
                     :sensors => _sensors,
@@ -292,7 +299,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             }
         }
         var elem = findDrawableById("speed") as Text;
-        if (elem) {
+        if (elem != null) {
             elem.setColor(spdColor);
         }
         var speed;
