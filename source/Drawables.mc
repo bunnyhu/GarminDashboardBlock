@@ -71,12 +71,6 @@ class RadarCompass extends WatchUi.Drawable {
         return r % 8;
     }
 
-    // /*
-    //     Convert wind bearing to Arc array
-    // */
-    // function cDA( wind , heading ) as Dictionary {
-    //     var center = wind + 90;
-    // }
 
     /*
         The wind bearing in degrees. North = 0, East = 90, South = 180, West = 270
