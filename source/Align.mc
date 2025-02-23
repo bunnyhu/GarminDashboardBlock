@@ -6,7 +6,7 @@ import Toybox.Graphics;
 /*
     Compensate the simulator and the device font padding difference
 
-    change excludeAnnotations in monkey.jungle s for device, d for simulator
+    change excludeAnnotations in monkey.jungle: s for device, d for simulator
 */
 
 class Align {
@@ -14,7 +14,7 @@ class Align {
         Font padding for real device
     */
     public var paddings;
-    public var font = Graphics.FONT_SMALL; // SYSTEM fonts -9 !!!
+    public var font = Graphics.FONT_SMALL; // SYSTEM fonts need -9 !!!
 
     function initialize() {
         paddings = getPaddings();

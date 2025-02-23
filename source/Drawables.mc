@@ -5,10 +5,10 @@ import Toybox.WatchUi;
 
 /*
     Datafield background color drawable
-    calling from layouts.xml
 */
 class Background extends WatchUi.Drawable {
     hidden var mColor as ColorValue;
+
 
     function initialize() {
         var dictionary = {
@@ -18,9 +18,11 @@ class Background extends WatchUi.Drawable {
         mColor = Graphics.COLOR_WHITE;
     }
 
+
     function setColor(color as ColorValue) as Void {
         mColor = color;
     }
+
 
     function draw(dc as Dc) as Void {
         dc.setColor(Graphics.COLOR_TRANSPARENT, mColor);
@@ -29,19 +31,20 @@ class Background extends WatchUi.Drawable {
 }
 
 /*
-    Combined compass and radar speed indicator    
+    Combined compass and radar speed indicator   
 */
 class RadarCompass extends WatchUi.Drawable {  
-    private var _fontCompIcon;
-    private var _fontSpeedNumber;
-    private var _align;
-    private var _labelOffset = 0;
+    private var _fontCompIcon;      // compass icons font
+    private var _fontSpeedNumber;   // wehicle speed number font
+    private var _align;             // device related text align class
+    private var _labelOffset = 0;   // align offset for label
     private var _directionTexts;    // compass directions
 
-    var sensors = null;
-    var color = Graphics.COLOR_BLACK;
-    var background = Graphics.COLOR_WHITE;
-    var label = "";
+    var sensors = null;             // all sensor infomation from datafield
+    var color = Graphics.COLOR_BLACK;       // texts color
+    var background = Graphics.COLOR_WHITE;  // system background color
+    var label = "";                 // label for my heading
+
 
     function initialize(options) {
         Drawable.initialize(options);
@@ -49,18 +52,20 @@ class RadarCompass extends WatchUi.Drawable {
         _fontSpeedNumber = Application.loadResource( Rez.Fonts.smallNumFont ) as FontResource;
         _align = new Align();
         _labelOffset = _align.paddings[Graphics.FONT_MEDIUM];
-        var n = WatchUi.loadResource( Rez.Strings.N ) as String;
-        var w = WatchUi.loadResource( Rez.Strings.W ) as String;
-        var e = WatchUi.loadResource( Rez.Strings.E ) as String;
-        var s = WatchUi.loadResource( Rez.Strings.S ) as String;
+        var n = WatchUi.loadResource( Rez.Strings.North ) as String;
+        var w = WatchUi.loadResource( Rez.Strings.West ) as String;
+        var e = WatchUi.loadResource( Rez.Strings.East ) as String;
+        var s = WatchUi.loadResource( Rez.Strings.South ) as String;
         _directionTexts = [n, n+e, e, s+e, s, s+w, w, n+w, n];
     }
+
 
     function setOptions(options) {
         if ( options[:sensors]!=null ) { sensors = options[:sensors]; }
         if ( options[:color]!=null ) { color = options[:color]; }
         if ( options[:background]!=null ) { background = options[:background]; }
     }
+
 
     /* 
         Get compass 45° direction number, 0 - North CW
@@ -102,20 +107,24 @@ class RadarCompass extends WatchUi.Drawable {
         return {:cb=>result[0], :ce=>result[1], :wb=>result[2], :we=>result[3]};
     }
 
+
     /*
         Draw the component
     */
     function draw(dc as Dc) as Void {
+        if (sensors == null) {
+            return;
+        }
         label = _directionTexts[getDirection(sensors[:heading])];
 
         if (sensors[:carSpeed]>0) {
-            // radar speed indicator mode
+            // radar speed mode
 
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
             dc.fillCircle(locX+19, locY+20, 30);
-            if (sensors[:carSpeed] < 45) {
+            if (sensors[:carDanger] == 1) {
                 dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_WHITE);    
-            } else if (sensors[:carSpeed] < 60) {
+            } else if (sensors[:carDanger] == 2) {
                 dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_WHITE);    
             } else {
                 dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_WHITE);
@@ -124,7 +133,6 @@ class RadarCompass extends WatchUi.Drawable {
             dc.drawCircle(locX+19, locY+20, 30);
             dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
             dc.drawText(locX + 19, locY+8, _fontSpeedNumber, sensors[:carSpeed].format("%u"), Graphics.TEXT_JUSTIFY_CENTER);
-
         } else {
             // compass mode
 
@@ -137,8 +145,8 @@ class RadarCompass extends WatchUi.Drawable {
             }
 
             if (sensors[:windDir] != null) {
+                // We have wind info
                 var windArc = getWindArc(sensors[:windDir], sensors[:heading]);
-
                 dc.setPenWidth(2);
                 dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_CLOCKWISE , windArc[:cb], windArc[:ce]);
                 dc.setPenWidth(6);
@@ -150,7 +158,6 @@ class RadarCompass extends WatchUi.Drawable {
             }
             dc.setColor(color, Graphics.COLOR_TRANSPARENT);
             dc.drawText(locX + 19, locY-_labelOffset, Graphics.FONT_MEDIUM, label, Graphics.TEXT_JUSTIFY_CENTER);
-            // dc.drawBitmap(locX, locY+15, _imageCompCircle);
             dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
             dc.drawText(locX+19, locY+15, _fontCompIcon, getDirection(sensors[:heading]).format("%1u"), Graphics.TEXT_JUSTIFY_CENTER);
         }
