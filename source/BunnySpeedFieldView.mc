@@ -3,7 +3,6 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.Activity;
 import Toybox.Graphics;
-import Toybox.UserProfile;
 import Toybox.Sensor;
 import Toybox.Ant;
 import Toybox.AntPlus;
@@ -46,15 +45,11 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _layout as String = "2x2";
     private var _speedMod = 1;      // speed multiplier km/mi
     private var _units as Array;    // unit strings [dist, speed]
-    private var _imgVRainbowBar;    // heart rate bar
     private var _iconFont;          // data icons
     private var _padding;           // Simu/Device padding
     private var _weather;           // Weather function class
 
     private var _sensors;           // All sensors data, always read from this
-    private var _hrZones as Array = [];         // heartRate Zones
-    private var _hrPixel as Float = 3.00f;      // 1 HR pulse pixel
-    private var _heartVisible as Number = 0;    // heart glyph flashing
 
     private var _radarListener;
     private var _radar = null;
@@ -109,11 +104,6 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     function initialize() {
         DataField.initialize();        
         resetSensors();
-        _hrZones = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
-        if (_hrZones.size() != 6 ) {
-            _hrZones = [1,2,3,4,5,6];
-        }        
-        _hrPixel =  90 / (_hrZones[5]-_hrZones[0]).toFloat();
         _gradientData[11] = true;   // Enable slope
         _padding = new Align();
         _radarListener = new MyBikeRadarListener();
@@ -126,7 +116,6 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             _units = ["mi", "mi/h", "F", "E"];
         }
         _weather = new MyWeather();
-        _imgVRainbowBar = Application.loadResource( Rez.Drawables.imageVRainbowBar ) as BitmapResource;
         _iconFont = Application.loadResource( Rez.Fonts.bikeDataIconFont ) as FontResource;
     }
 
@@ -278,16 +267,23 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             setDrawableText("slope", _sensors[:slope].format("%0.1f"));
         }
 
-        View.onUpdate(dc);  // update the layouts, do it BEFORE extra drawing !!!!!!!
-
-        if (_layout.equals("2x2")) {
-            drawColorBar(dc, {
-                :x => 1,
-                :y => 1,
+        if (View.findDrawableById("pulseBar") != null) {
+            (View.findDrawableById("pulseBar") as HRZoneBar).setOptions({
                 :hr => _sensors[:hr],
-                :icon => "hrIcon",
+                :background => getBackgroundColor(),
             });
         }
+
+        View.onUpdate(dc);  // update the layouts, do it BEFORE extra drawing !!!!!!!
+
+        // if (_layout.equals("2x2")) {
+        //     drawColorBar(dc, {
+        //         :x => 1,
+        //         :y => 1,
+        //         :hr => _sensors[:hr],
+        //         :icon => "hrIcon",
+        //     });
+        // }
     }
 
 
@@ -428,39 +424,5 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if (elem != null) {
             elem.setText(pValue);
         }                
-    }
-
-
-    /*
-        Draw heart rate bar
-    */
-    function drawColorBar(dc as Dc, options as { :x as Number, :y as Number, :hr as Number }) {
-        if (options[:hr] == null) {
-            return;
-        }
-        var hr = options[:hr];
-        // balcsi kör
-        // 87,103,121,138,156,180         87-103, 104-121, 122-138, 139-156, 157<
-        // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180, 
-        if (hr > _hrZones[5]) {
-            hr = _hrZones[5];
-        } else if (hr < _hrZones[0]) {
-            hr = _hrZones[0];               
-        }
-        dc.setColor(getBackgroundColor(), Graphics.COLOR_TRANSPARENT);
-        dc.drawBitmap(options[:x], options[:y], _imgVRainbowBar);
-        dc.fillRectangle(options[:x], options[:y], 15, Math.floor(_hrPixel * (_hrZones[5]-hr) ));
-
-        _heartVisible ++;   // blinking the heart
-        if (_heartVisible > 2) {
-            var y = options[:y]-8+Math.floor(_hrPixel * (_hrZones[5]-hr) );
-            if (y >= 0) {
-                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-                dc.drawText(2, y, _iconFont, "H", Graphics.TEXT_JUSTIFY_LEFT);  // Heart glyph
-            }
-        }
-        if (_heartVisible > 4) {
-            _heartVisible = 0;
-        }
     }
 }

@@ -2,6 +2,7 @@ import Toybox.Lang;
 import Toybox.Application;
 import Toybox.Graphics;
 import Toybox.WatchUi;
+import Toybox.UserProfile;
 
 /*
     Datafield background color drawable
@@ -160,6 +161,65 @@ class RadarCompass extends WatchUi.Drawable {
             dc.drawText(locX + 19, locY-_labelOffset, Graphics.FONT_MEDIUM, label, Graphics.TEXT_JUSTIFY_CENTER);
             dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
             dc.drawText(locX+19, locY+15, _fontCompIcon, getDirection(sensors[:heading]).format("%1u"), Graphics.TEXT_JUSTIFY_CENTER);
+        }
+    }
+}
+
+class HRZoneBar extends WatchUi.Drawable {
+    var hr = null;
+    var _hrZones as Array = [];         // heartRate Zones
+    var bgColor = Graphics.COLOR_WHITE;
+
+    private var _heartVisible as Number = 0;    // heart glyph flashing
+    private var _hrPixel as Float = 3.00f;      // 1 HR pulse pixel
+    private var _imgVRainbowBar;    // heart rate bar
+    private var _iconFont;          // data icons
+
+
+    function initialize(options) {
+        Drawable.initialize(options);
+        _hrZones = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
+        if (_hrZones.size() != 6 ) {
+            _hrZones = [1,2,3,4,5,6];
+        }        
+        _hrPixel =  90 / (_hrZones[5]-_hrZones[0]).toFloat();
+        _imgVRainbowBar = Application.loadResource( Rez.Drawables.imageVRainbowBar ) as BitmapResource;
+        _iconFont = Application.loadResource( Rez.Fonts.bikeDataIconFont ) as FontResource;
+    }
+
+
+    function setOptions( options ) {
+        if (options[:hr] != null) { hr = options[:hr]; }
+        if (options[:background] != null) { bgColor = options[:background]; }
+    }
+
+
+    function draw(dc as Dc) as Void {
+        if (hr == null) {
+            return;
+        }
+        // balcsi kör
+        // 87,103,121,138,156,180         87-103, 104-121, 122-138, 139-156, 157<
+        // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180, 
+        if (hr > _hrZones[5]) {
+            hr = _hrZones[5];
+        } else if (hr < _hrZones[0]) {
+            hr = _hrZones[0];               
+        }
+        dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
+        dc.drawBitmap(locX, locY, _imgVRainbowBar);
+        dc.fillRectangle(locX, locY, 15, Math.floor(_hrPixel * (_hrZones[5] - hr) ));
+
+        _heartVisible ++;   // blinking the heart
+        if (_heartVisible > 2) {
+            var y = locY - 8 + Math.floor(_hrPixel * (_hrZones[5] - hr) );
+            if (y >= 0) {
+                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+                dc.drawText(locX + 2, y, _iconFont, "H", Graphics.TEXT_JUSTIFY_LEFT);  // Heart glyph
+            }
+        }
+        if (_heartVisible > 4) {
+            _heartVisible = 0;
         }
     }
 }

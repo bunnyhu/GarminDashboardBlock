@@ -95,7 +95,7 @@ class MyWeather {
             // System.print(Time.now().subtract(info.startTime).value());
             // System.print(", ");
             if ((currentTS == null) && (Time.now().subtract(info.startTime).value() <= START_DURATION )) {
-                System.println("indulási fázis és nincs adat");
+                // System.println("indulási fázis és nincs adat");
                 if (lastTryTS == null) {
                     // System.println("Még sosem próbáltam");
                     loadWeather();

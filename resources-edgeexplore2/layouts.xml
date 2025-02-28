@@ -1,5 +1,4 @@
-<!-- Edge 1000 / Explore/2 240x400 -->
-<!-- background="Graphics.COLOR_GREEN"  -->
+<!-- Explore/2 240x400 -->
 <layouts>    
     <layout id="layout2x2">
         <!-- 240x156 -->
@@ -13,6 +12,10 @@
         <label id="cadence" x="235" y="120" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.mediumNumFont"/>
         <label id="slopeIcon" x="235" y="-4" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="G"/>
         <label id="slope" x="235" y="20"  justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <drawable class="HRZoneBar" id="pulseBar">
+            <param name="locX">1</param>
+            <param name="locY">1</param>
+        </drawable>
         <drawable class="RadarCompass" id="multiCompass">
             <param name="locX">110</param>
             <param name="locY">102</param>

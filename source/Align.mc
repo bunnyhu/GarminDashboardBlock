@@ -7,6 +7,7 @@ import Toybox.Graphics;
     Compensate the simulator and the device font padding difference
 
     change excludeAnnotations in monkey.jungle: s for device, d for simulator
+    @link https://github.com/maca88/E-Bike-Edge-MultiField/tree/master/Source/FontPaddings
 */
 
 class Align {
