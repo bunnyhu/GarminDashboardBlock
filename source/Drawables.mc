@@ -4,9 +4,9 @@ import Toybox.Graphics;
 import Toybox.WatchUi;
 import Toybox.UserProfile;
 
-/*
+/*  *************************************************************
     Datafield background color drawable
-*/
+    *************************************************************  */
 class Background extends WatchUi.Drawable {
     hidden var mColor as ColorValue;
 
@@ -31,9 +31,9 @@ class Background extends WatchUi.Drawable {
     }
 }
 
-/*
+/*  *************************************************************
     Combined compass and radar speed indicator   
-*/
+    *************************************************************   */
 class RadarCompass extends WatchUi.Drawable {  
     private var _fontCompIcon;      // compass icons font
     private var _fontSpeedNumber;   // wehicle speed number font
@@ -45,7 +45,8 @@ class RadarCompass extends WatchUi.Drawable {
     var color = Graphics.COLOR_BLACK;       // texts color
     var background = Graphics.COLOR_WHITE;  // system background color
     var label = "";                 // label for my heading
-
+    var baseCompassRadius = 20;
+    var baseRadarRadius = 30;
 
     function initialize(options) {
         Drawable.initialize(options);
@@ -58,9 +59,22 @@ class RadarCompass extends WatchUi.Drawable {
         var e = WatchUi.loadResource( Rez.Strings.East ) as String;
         var s = WatchUi.loadResource( Rez.Strings.South ) as String;
         _directionTexts = [n, n+e, e, s+e, s, s+w, w, n+w, n];
+        setOptions(options);
     }
 
+    function draw(dc as Dc) as Void {
+        if (sensors == null) {
+            return;
+        }
+        if (sensors[:carSpeed]>0) {
+            drawRadar(dc);      // radar speed mode
+        } else {
+            drawCompass(dc);    // compass mode
+        }
+    }
 
+    /*  *************************************************************
+    */
     function setOptions(options) {
         if ( options[:sensors]!=null ) { sensors = options[:sensors]; }
         if ( options[:color]!=null ) { color = options[:color]; }
@@ -68,8 +82,8 @@ class RadarCompass extends WatchUi.Drawable {
     }
 
 
-    /* 
-        Get compass 45° direction number, 0 - North CW
+    /*  *************************************************************
+        Get compass 1/8 direction number, 0 - North CW
     */
     function getDirection(pHeadingValue) as Number {
         var r = Math.round(pHeadingValue / 45).toNumber();
@@ -78,7 +92,7 @@ class RadarCompass extends WatchUi.Drawable {
     }
 
 
-    /*
+    /*  *************************************************************
         The wind bearing in degrees. North = 0, East = 90, South = 180, West = 270
     */
     function getWindArc( pWind, pHeading ) as Dictionary {
@@ -105,66 +119,71 @@ class RadarCompass extends WatchUi.Drawable {
                 result[f] = result[f] - 360;
             }
         }
+        //  cut begin/end, wind begin/end
         return {:cb=>result[0], :ce=>result[1], :wb=>result[2], :we=>result[3]};
     }
 
 
-    /*
-        Draw the component
+    /*  *************************************************************
+        Draw veicle speed radar warning
     */
-    function draw(dc as Dc) as Void {
-        if (sensors == null) {
-            return;
+    function drawRadar(dc as Dc) as Void {
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.fillCircle(locX+17, locY+30, baseRadarRadius);
+        if (sensors[:carDanger] == 1) {
+            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_WHITE);    
+        } else if (sensors[:carDanger] == 2) {
+            dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_WHITE);    
+        } else {
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_WHITE);
         }
+        dc.setPenWidth(8);        
+        dc.drawCircle(locX+17, locY+30, baseRadarRadius);
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(locX + 17, locY+18, _fontSpeedNumber, sensors[:carSpeed].format("%u"), Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+
+    /*  *************************************************************
+        Draw wind direction supported headind up moving north compass
+    */
+    function drawCompass(dc as Dc) as Void {
         label = _directionTexts[getDirection(sensors[:heading])];
 
-        if (sensors[:carSpeed]>0) {
-            // radar speed mode
-
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-            dc.fillCircle(locX+19, locY+20, 30);
-            if (sensors[:carDanger] == 1) {
-                dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_WHITE);    
-            } else if (sensors[:carDanger] == 2) {
-                dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_WHITE);    
-            } else {
-                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_WHITE);
-            }
-            dc.setPenWidth(8);
-            dc.drawCircle(locX+19, locY+20, 30);
-            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(locX + 19, locY+8, _fontSpeedNumber, sensors[:carSpeed].format("%u"), Graphics.TEXT_JUSTIFY_CENTER);
+        // white bg stroke circle area
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.fillCircle(locX+19, locY+19+baseCompassRadius, baseCompassRadius);
+        if (background == Graphics.COLOR_WHITE) {
+            dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_WHITE);
         } else {
-            // compass mode
-
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-            dc.fillCircle(locX+19, locY+19+15, 16);
-            if (background == Graphics.COLOR_WHITE) {
-                dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_WHITE);
-            } else {
-                dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
-            }
-
-            if (sensors[:windDir] != null) {
-                // We have wind info
-                var windArc = getWindArc(sensors[:windDir], sensors[:heading]);
-                dc.setPenWidth(2);
-                dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_CLOCKWISE , windArc[:cb], windArc[:ce]);
-                dc.setPenWidth(6);
-                dc.setColor(Graphics.COLOR_PURPLE, background);
-                dc.drawArc(locX+19, locY+19+15, 16, Graphics.ARC_COUNTER_CLOCKWISE , windArc[:wb], windArc[:we]);
-            } else {
-                dc.setPenWidth(2);
-                dc.drawCircle(locX+19, locY+19+15, 16);
-            }
-            dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(locX + 19, locY-_labelOffset, Graphics.FONT_MEDIUM, label, Graphics.TEXT_JUSTIFY_CENTER);
-            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(locX+19, locY+15, _fontCompIcon, getDirection(sensors[:heading]).format("%1u"), Graphics.TEXT_JUSTIFY_CENTER);
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_BLACK);
         }
-    }
+
+        if (sensors[:windDir] != null) {
+            // We have wind info, let show its direction on circle with arc
+            var windArc = getWindArc(sensors[:windDir], sensors[:heading]);
+            dc.setPenWidth(2);
+            dc.drawArc(locX+19, locY+20+baseCompassRadius, baseCompassRadius, Graphics.ARC_CLOCKWISE , windArc[:cb], windArc[:ce]);
+            dc.setPenWidth(10);
+            dc.setColor(Graphics.COLOR_PURPLE, background);
+            dc.drawArc(locX+19, locY+20+baseCompassRadius, baseCompassRadius, Graphics.ARC_COUNTER_CLOCKWISE , windArc[:wb], windArc[:we]);
+        } else {
+            // No wind, full circle
+            dc.setPenWidth(2);
+            dc.drawCircle(locX+19, locY+20+baseCompassRadius, baseCompassRadius);
+        }
+        // Direction label and compass arrow (from font)
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(locX + 19, locY-_labelOffset, Graphics.FONT_MEDIUM, label, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(locX+19, locY+baseCompassRadius, _fontCompIcon, getDirection(sensors[:heading]).format("%1u"), Graphics.TEXT_JUSTIFY_CENTER);
+    }    
 }
 
+
+/*  *************************************************************
+    Heart rate zone bar with heart glyph
+    *************************************************************   */
 class HRZoneBar extends WatchUi.Drawable {
     var hr = null;
     var _hrZones as Array = [];         // heartRate Zones
@@ -175,51 +194,79 @@ class HRZoneBar extends WatchUi.Drawable {
     private var _imgVRainbowBar;    // heart rate bar
     private var _iconFont;          // data icons
 
-
     function initialize(options) {
         Drawable.initialize(options);
         _hrZones = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
         if (_hrZones.size() != 6 ) {
             _hrZones = [1,2,3,4,5,6];
         }        
-        _hrPixel =  90 / (_hrZones[5]-_hrZones[0]).toFloat();
+        // _hrPixel =  90 / (_hrZones[5]-_hrZones[0]).toFloat();
+        _hrPixel =  75 / (_hrZones[5]-_hrZones[2]).toFloat();
         _imgVRainbowBar = Application.loadResource( Rez.Drawables.imageVRainbowBar ) as BitmapResource;
         _iconFont = Application.loadResource( Rez.Fonts.bikeDataIconFont ) as FontResource;
+        setOptions(options);
     }
 
 
+    /*  *************************************************************
+    */
     function setOptions( options ) {
         if (options[:hr] != null) { hr = options[:hr]; }
         if (options[:background] != null) { bgColor = options[:background]; }
     }
 
 
+    /*  *************************************************************
+    */
+    function getZone(_hr) as Number {        
+        if (_hr > _hrZones[5]) {
+            _hr = _hrZones[5];
+        } else if (_hr < _hrZones[2]) {
+            _hr = _hrZones[2];               
+        }
+        for (var f=0; f<=4; f++) {
+            if ((_hr>=_hrZones[f]) && (_hr<=_hrZones[f+1])) {
+                return f;
+            }
+        }
+        return 5;
+    }
+
+    /*  *************************************************************
+    */
     function draw(dc as Dc) as Void {
-        if (hr == null) {
+        if ((hr == null) || (hr<25)) {
             return;
         }
         // balcsi kör
         // 87,103,121,138,156,180         87-103, 104-121, 122-138, 139-156, 157<
-        // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180, 
-        if (hr > _hrZones[5]) {
-            hr = _hrZones[5];
-        } else if (hr < _hrZones[0]) {
-            hr = _hrZones[0];               
-        }
-        dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawBitmap(locX, locY, _imgVRainbowBar);
-        dc.fillRectangle(locX, locY, 15, Math.floor(_hrPixel * (_hrZones[5] - hr) ));
+        // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180,
+        // 91,108,126,144,162,180
 
-        _heartVisible ++;   // blinking the heart
-        if (_heartVisible > 2) {
-            var y = locY - 8 + Math.floor(_hrPixel * (_hrZones[5] - hr) );
-            if (y >= 0) {
-                dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-                dc.drawText(locX + 2, y, _iconFont, "H", Graphics.TEXT_JUSTIFY_LEFT);  // Heart glyph
-            }
+        var ZoneClear = [2,2,2,1,0,0];
+        dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
+        dc.drawBitmap(locX, locY+23, _imgVRainbowBar);
+        // dc.fillRectangle(locX, locY+23, 15, Math.floor(_hrPixel * (_hrZones[5] - hr) ));        
+        dc.fillRectangle(locX, locY+23, 15, Math.floor((ZoneClear[getZone(hr)]*25) ));        
+
+        var y = Math.floor(_hrPixel * (_hrZones[5] - hr) );
+        if (y>70) {
+            y = 70;
         }
-        if (_heartVisible > 4) {
-            _heartVisible = 0;
-        }
+        dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+        // dc.fillRectangle(locX+10, locY+21+y, 15, 4);
+        dc.fillPolygon([[locX+13,locY+23+y], [locX+23,locY+18+y], [locX+23,locY+28+y]]);
+
+        // _heartVisible ++;   // blinking the heart
+        // if (_heartVisible > 2) {
+        //     var y = locY - 8 + Math.floor(_hrPixel * (_hrZones[5] - hr) );
+        //     if (y >= 0) {
+        //         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        //         dc.drawText(locX + 2, y, _iconFont, "H", Graphics.TEXT_JUSTIFY_LEFT);  // Heart glyph
+        //     }
+        // }
+        // if (_heartVisible > 4) {
+        //     _heartVisible = 0;
+        // }
     }
 }

@@ -12,13 +12,14 @@
         <label id="cadence" x="235" y="120" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.mediumNumFont"/>
         <label id="slopeIcon" x="235" y="-4" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="G"/>
         <label id="slope" x="235" y="20"  justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="hrNum" x="2" y="4" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_SMALL"/>
         <drawable class="HRZoneBar" id="pulseBar">
             <param name="locX">1</param>
             <param name="locY">1</param>
         </drawable>
         <drawable class="RadarCompass" id="multiCompass">
             <param name="locX">110</param>
-            <param name="locY">102</param>
+            <param name="locY">90</param>
         </drawable>
     </layout>
     <layout id="layout2x1">

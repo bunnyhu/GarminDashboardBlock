@@ -54,13 +54,13 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _radarListener;
     private var _radar = null;
     private var _colorDataText as Array = [    // standard data color
-        "speed", "distance", "timer", "cadence", "avgSpeed", "slope", "hrIcon",
+        "speed", "distance", "timer", "cadence", "avgSpeed", "slope", "hrIcon", "hrNum",
     ];
     private var _colorLabelText as Array = [   // label color
         "fieldLabel", "cadLabel", "avgSpLabel", "slopeIcon", "distanceIcon", "timerIcon", "cadenceIcon", "speedIcon",
     ];
     private var _alignText as Array = [         // reAlign texts
-        "fieldLabel", "cadLabel", "avgSpLabel",
+        "fieldLabel", "cadLabel", "avgSpLabel", "hrNum",
     ];
 
     // current speed is [ok, little slow, real slow]
@@ -266,7 +266,8 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         } else if (_layout.equals("2x1")) {
             setDrawableText("slope", _sensors[:slope].format("%0.1f"));
         }
-
+        setDrawableText("hrNum", _sensors[:hr].format("%u"));
+        
         if (View.findDrawableById("pulseBar") != null) {
             (View.findDrawableById("pulseBar") as HRZoneBar).setOptions({
                 :hr => _sensors[:hr],

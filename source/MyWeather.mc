@@ -89,28 +89,47 @@ class MyWeather {
         return wind;
     }
 
-    function get(info as Activity.Info) as Boolean {
-        if ((info.timerState == Activity.TIMER_STATE_ON) && (info.startTime != null)) {
-            // Fut az aktivitás
-            // System.print(Time.now().subtract(info.startTime).value());
-            // System.print(", ");
-            if ((currentTS == null) && (Time.now().subtract(info.startTime).value() <= START_DURATION )) {
-                // System.println("indulási fázis és nincs adat");
-                if (lastTryTS == null) {
-                    // System.println("Még sosem próbáltam");
-                    loadWeather();
-                } else if (Time.now().subtract(lastTryTS).value() >= START_REFRESH) {
-                    // System.println("volt már sikertelen próba és ideje újra próbálni");
-                    loadWeather();
-                }                
-            } else if ((currentTS == null) && (Time.now().subtract(lastTryTS).value() >= NORMAL_FIRST_REFRESH)) {
-                // System.println("Lejárt az indítási fázis de még mindig nincs adat");
-                loadWeather();
-            } else if (Time.now().subtract(lastTryTS).value() >= NORMAL_REFRESH) {
-                // System.println("Akár van adat akár nincs, normál frissítést elvégezzük");
-                loadWeather();
+
+    function needLoad(info as Activity.Info) as Boolean {
+        try {
+            if (info.startTime == null) {
+                // System.println("Nem indult el az időmérés");
+                return false;
             }
+            if (lastTryTS == null) {
+                // System.println("Még sosem próbáltam");
+                return true;
+            }
+            if (currentTS == null) {
+                // System.println("Nincs adatunk");
+                if (Time.now().subtract(info.startTime).value() <= START_DURATION ) {
+                    // System.println("indulási fázis és nincs adat");
+                    return true;
+                } else if (Time.now().subtract(lastTryTS).value() >= NORMAL_FIRST_REFRESH) {
+                    // System.println("Lejárt az indítási fázis de még mindig nincs adat");
+                    return true;
+                }
+            } 
+            if (Time.now().subtract(lastTryTS).value() >= NORMAL_REFRESH) {
+                // System.println("Akár van adat akár nincs, a normál frissítést elvégezzük");
+                return true;
+            }
+        } catch( ex ) {
+            System.println("Hiba történt");
         }
-        return (hourlyTS && currentTS) ? true : false;
+        return false;
+    }
+
+    function get(info as Activity.Info) as Boolean {
+        try {
+            if ((info.timerState == Activity.TIMER_STATE_ON) && (info.startTime != null)) {                
+                // Fut az aktivitás
+                if (needLoad(info)) {
+                    loadWeather();
+                }
+            }
+        } finally {
+            return (hourlyTS != null && currentTS != null) ? true : false;
+        }
     }
 }
