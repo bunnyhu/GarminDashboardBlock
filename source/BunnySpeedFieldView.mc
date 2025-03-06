@@ -200,9 +200,9 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if ((_radarListener != null) && _radarListener.maxSpeed>0) {
             _sensors[:carRelSpeed] = Math.round(_radarListener.maxSpeed * _speedMod);
             _sensors[:carSpeed] = Math.round(_sensors[:carRelSpeed] + _sensors[:speed]);
-            if ( _radarListener.maxSpeed <= (45 / 3.6)  ) {
+            if ( _sensors[:carSpeed] <= (45 / 3.6)* _speedMod   ) {
                 _sensors[:carDanger] = 1;
-            } else if ( _radarListener.maxSpeed <= (60 / 3.6)  ) {
+            } else if ( _sensors[:carSpeed] <= (60 / 3.6)* _speedMod  ) {
                 _sensors[:carDanger] = 2;
             } else {
                 _sensors[:carDanger] = 3;

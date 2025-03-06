@@ -12,7 +12,7 @@
         <label id="cadence" x="235" y="120" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.mediumNumFont"/>
         <label id="slopeIcon" x="235" y="-4" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="G"/>
         <label id="slope" x="235" y="20"  justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
-        <label id="hrNum" x="2" y="4" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_SMALL"/>
+        <label id="hrNum" x="2" y="4" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_MEDIUM"/>
         <drawable class="HRZoneBar" id="pulseBar">
             <param name="locX">1</param>
             <param name="locY">1</param>

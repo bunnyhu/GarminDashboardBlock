@@ -16,7 +16,7 @@ My data field displays 3 sizes of slightly different data, adapted to my own nee
 | average speed | | X | | |
 | current cadence | | X | X | |
 | climb % | negative if slope | X | X | |
-| heart rate zones | colorized bar | X | | |
+| heart rate & zones | colorized bar | X | | |
 | compass | (see below) | X | | |
 | wind direction | included into compass | X | | |
 | radar speed | with color support | X | | |
@@ -48,16 +48,5 @@ https://apps.garmin.com/
 https://github.com/bunnyhu/BunnySpeedField
 
 ## History
-v1.0    Initial release.  2025. feb. 23.
+v1.0.2    Initial release.  2025. marc. 3.
 
-## Q&A
-### Why this data and not ...
-First I want to put together the most important informations, like timer, distance, etc. Then I realize the refreshing timer have a little bit shifting between the factory datafield and the custom made. Not much, but that delay is really annoying when one data change a bit later than the others. This is why I choice some important (for me!) but not every second changing data. Also because they are not "life saver" important informations, I can use smaller number or not precise presentations and put more data to the same place.
-### Why those devices, I need it for ...
-Well, Garmin gives the developers a pretty good simulator that is supposed to know all your devices, but the accuracy of the display is quite poor. The size of the letters and numbers are different, their positioning is not the same, so designing a face calculated to such a pixel for a device I don't physically own is near impossible. Since I only have Explore 2 and my friend have 1040 - I could set up exactly what goes where and how it appears only those devices. 
-### I really like this on my device / my language
-No problem, feel free to redesign for your device, the source code is avaiable on GitHub and no need programming (but the VSC).
-Check the *resources* folder and folders start with *resources-* what you need to tailoring. Make the folder that you need and modify the xml files then compile it. 
-* https://developer.garmin.com/connect-iq/connect-iq-basics/getting-started/
-* https://developer.garmin.com/connect-iq/reference-guides/devices-reference/
-* https://developer.garmin.com/connect-iq/core-topics/resources/

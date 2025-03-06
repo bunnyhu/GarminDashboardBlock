@@ -238,11 +238,8 @@ class HRZoneBar extends WatchUi.Drawable {
         if ((hr == null) || (hr<25)) {
             return;
         }
-        // balcsi kör
-        // 87,103,121,138,156,180         87-103, 104-121, 122-138, 139-156, 157<
         // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180,
         // 91,108,126,144,162,180
-
         var ZoneClear = [2,2,2,1,0,0];
         dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
         dc.drawBitmap(locX, locY+23, _imgVRainbowBar);
