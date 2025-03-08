@@ -32,11 +32,10 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
 
 
 /*
-    Bunny's extended speed datafield for Garmin Edge Explore2
+    Bunny's extended speed datafield for Garmin Edge
 
     @author Karoly Szabo (Bunny)
-    @version 1.0
-    @release 2025. febr. 23.
+    @version 1.0.3
     @link https://github.com/bunnyhu/BunnySpeedField
 
     @note FONT_MEDIUM = garmin label, FONT_NUMBER_MEDIUM = garmin 2 lines num, FONT_NUMBER_HOT = garmin 1 line num
@@ -44,7 +43,7 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
 class BunnySpeedFieldView extends WatchUi.DataField {
     private var _layout as String = "2x2";
     private var _speedMod = 1;      // speed multiplier km/mi
-    private var _units as Array;    // unit strings [dist, speed]
+    private var _units as Array;    // unit strings [dist, speed, icon dist, icon speed]
     private var _iconFont;          // data icons
     private var _padding;           // Simu/Device padding
     private var _weather;           // Weather function class
@@ -52,11 +51,13 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _sensors;           // All sensors data, always read from this
 
     private var _radarListener;
-    private var _radar = null;
-    private var _colorDataText as Array = [    // standard data color
+    private var _radar = null;    
+    private const radarDangerLimits = [45, 60]; // max radar speed for circle color [green, yellow ]
+
+    private var _colorDataText as Array = [     // standard data color
         "speed", "distance", "timer", "cadence", "avgSpeed", "slope", "hrIcon", "hrNum",
     ];
-    private var _colorLabelText as Array = [   // label color
+    private var _colorLabelText as Array = [    // label color
         "fieldLabel", "cadLabel", "avgSpLabel", "slopeIcon", "distanceIcon", "timerIcon", "cadenceIcon", "speedIcon",
     ];
     private var _alignText as Array = [         // reAlign texts
@@ -200,9 +201,9 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if ((_radarListener != null) && _radarListener.maxSpeed>0) {
             _sensors[:carRelSpeed] = Math.round(_radarListener.maxSpeed * _speedMod);
             _sensors[:carSpeed] = Math.round(_sensors[:carRelSpeed] + _sensors[:speed]);
-            if ( _sensors[:carSpeed] <= (45 / 3.6)* _speedMod   ) {
+            if ( _sensors[:carSpeed] <= (radarDangerLimits[0] / 3.6)* _speedMod   ) {
                 _sensors[:carDanger] = 1;
-            } else if ( _sensors[:carSpeed] <= (60 / 3.6)* _speedMod  ) {
+            } else if ( _sensors[:carSpeed] <= (radarDangerLimits[1] / 3.6)* _speedMod  ) {
                 _sensors[:carDanger] = 2;
             } else {
                 _sensors[:carDanger] = 3;
@@ -276,15 +277,6 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         }
 
         View.onUpdate(dc);  // update the layouts, do it BEFORE extra drawing !!!!!!!
-
-        // if (_layout.equals("2x2")) {
-        //     drawColorBar(dc, {
-        //         :x => 1,
-        //         :y => 1,
-        //         :hr => _sensors[:hr],
-        //         :icon => "hrIcon",
-        //     });
-        // }
     }
 
 
