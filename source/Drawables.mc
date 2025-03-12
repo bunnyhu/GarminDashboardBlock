@@ -10,7 +10,6 @@ import Toybox.UserProfile;
 class Background extends WatchUi.Drawable {
     hidden var mColor as ColorValue;
 
-
     function initialize() {
         var dictionary = {
             :identifier => "Background"
@@ -219,11 +218,6 @@ class HRZoneBar extends WatchUi.Drawable {
     /*  *************************************************************
     */
     function getZone(_hr) as Number {        
-        if (_hr > _hrZones[5]) {
-            _hr = _hrZones[5];
-        } else if (_hr < _hrZones[2]) {
-            _hr = _hrZones[2];               
-        }
         for (var f=0; f<=4; f++) {
             if ((_hr>=_hrZones[f]) && (_hr<=_hrZones[f+1])) {
                 return f;
@@ -233,24 +227,37 @@ class HRZoneBar extends WatchUi.Drawable {
     }
 
     /*  *************************************************************
+        Garmin min: 65 max: 181
+        91-108, 109-126, 127-144, 145-162, 163-180,
+        91,108,126,144,162,180
     */
     function draw(dc as Dc) as Void {
         if ((hr == null) || (hr<25)) {
             return;
         }
-        // Garmin min: 65 max: 181        91-108, 109-126, 127-144, 145-162, 163-180,
-        // 91,108,126,144,162,180
+
+        var _hr = hr;
+        if (_hr > _hrZones[5]) {
+            _hr = _hrZones[5];
+        } else if (_hr < _hrZones[2]) {
+            _hr = _hrZones[2];               
+        }
+
         var ZoneClear = [2,2,2,1,0,0];
         dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
         dc.drawBitmap(locX, locY+23, _imgVRainbowBar);
         // dc.fillRectangle(locX, locY+23, 15, Math.floor(_hrPixel * (_hrZones[5] - hr) ));        
-        dc.fillRectangle(locX, locY+23, 15, Math.floor((ZoneClear[getZone(hr)]*25) ));        
+        dc.fillRectangle(locX, locY+23, 15, Math.floor(ZoneClear[getZone(_hr)]*25));        
 
-        var y = Math.floor(_hrPixel * (_hrZones[5] - hr) );
+        var y = Math.floor(_hrPixel * (_hrZones[5] - _hr) );
         if (y>70) {
             y = 70;
         }
-        dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+        if (bgColor == Graphics.COLOR_BLACK) {
+            dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);
+        } else {
+            dc.setColor(Graphics.COLOR_DK_RED, Graphics.COLOR_TRANSPARENT);
+        }
         // dc.fillRectangle(locX+10, locY+21+y, 15, 4);
         dc.fillPolygon([[locX+13,locY+23+y], [locX+23,locY+18+y], [locX+23,locY+28+y]]);
 

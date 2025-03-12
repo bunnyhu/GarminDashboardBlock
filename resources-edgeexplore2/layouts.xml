@@ -18,7 +18,7 @@
             <param name="locY">1</param>
         </drawable>
         <drawable class="RadarCompass" id="multiCompass">
-            <param name="locX">110</param>
+            <param name="locX">105</param>
             <param name="locY">90</param>
         </drawable>
     </layout>

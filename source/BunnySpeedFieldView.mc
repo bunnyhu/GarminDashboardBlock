@@ -7,7 +7,9 @@ import Toybox.Sensor;
 import Toybox.Ant;
 import Toybox.AntPlus;
 
-
+/*
+    Radar event listener
+*/
 class MyBikeRadarListener extends AntPlus.BikeRadarListener {
     var targets = null;
     var maxSpeed = 0f;
@@ -35,8 +37,8 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
     Bunny's extended speed datafield for Garmin Edge
 
     @author Karoly Szabo (Bunny)
-    @version 1.0.3
-    @link https://github.com/bunnyhu/BunnySpeedField
+    @version 1.0.4
+    @link https://github.com/bunnyhu/ExtendedSpeedField
 
     @note FONT_MEDIUM = garmin label, FONT_NUMBER_MEDIUM = garmin 2 lines num, FONT_NUMBER_HOT = garmin 1 line num
 */
@@ -47,7 +49,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _iconFont;          // data icons
     private var _padding;           // Simu/Device padding
     private var _weather;           // Weather function class
-
+    private var _darkMode;
     private var _sensors;           // All sensors data, always read from this
 
     private var _radarListener;
@@ -92,6 +94,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             :slope       => 0,
             :distance    => 0.0f,
             :cadence     => 0,
+            :avgCadence  => 0,
             :heading     => 0.0f,
             :hr          => 0,
             :carSpeed    => 0,
@@ -189,6 +192,9 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if (info.currentCadence != null) {
             _sensors[:cadence] = info.currentCadence;
         }
+        if (info.averageCadence != null) {
+            _sensors[:avgCadence] = info.averageCadence;
+        }
         if (info.currentHeartRate != null) {
             _sensors[:hr] = info.currentHeartRate;
         }
@@ -226,9 +232,11 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         var labelColor;
 
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
+            _darkMode = true;
             numColor = Graphics.COLOR_WHITE;
             labelColor = Graphics.COLOR_DK_GRAY;
         } else {
+            _darkMode = false;
             numColor = Graphics.COLOR_BLACK;
             labelColor = Graphics.COLOR_LT_GRAY;
         }
@@ -250,8 +258,8 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         } else {
             setDrawableText("avgSpeed", Math.round(_sensors[:avgSpeed]).format("%0.0f"));
         }        
-        setDrawableText("cadence", _sensors[:cadence].format("%0.0f"));
-        setDrawableText("distance", showDistance(_sensors[:distance]));
+        setDrawableText("cadence", formatCadence());
+        setDrawableText("distance", formatDistance(_sensors[:distance]));
         setDrawableText("timer", formatTime(_sensors[:timer]));
 
         if (_layout.equals("2x2")) {
@@ -290,13 +298,13 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             var deltaSpd = _sensors[:speed] - _sensors[:avgSpeed];
             if (deltaSpd >= 0) {
                 spdColor = speedColors[0];
-                deltaDot = "(";
+                deltaDot = "(";     // UP
             } else if (deltaSpd > -1) {
                 spdColor = speedColors[1];                
-                deltaDot = ")";
+                deltaDot = ")";     // DOWN
             } else {
                 spdColor = speedColors[2];
-                deltaDot = ")";
+                deltaDot = ")";     // DOWN
             }
         }
         var elem = findDrawableById("speed") as Text;
@@ -314,6 +322,27 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             speed = speed.substring(null, dot) + deltaDot + speed.substring(dot+1, null);
         }
         setDrawableText("speed", speed);
+    }
+
+
+    /*
+        Delta indexed cadence number
+    */
+    function formatCadence() as String {
+        if (_sensors[:cadence] == null) {
+            return "";
+        }
+
+        var index = "";
+        if ((_sensors[:avgCadence] != null) && (_sensors[:cadence] > 0)) {
+            if (_sensors[:cadence] >= _sensors[:avgCadence]) {
+                index = "[";    // UP
+            } else {
+                index = "]";    // DOWN
+            }
+        }
+
+        return index + _sensors[:cadence].format("%0.0f");
     }
 
 
@@ -340,7 +369,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     /*
         Dinamic distance decimal formatting
     */
-    function showDistance(pDistance) as String {
+    function formatDistance(pDistance) as String {
         if (pDistance == null) {
             return "-";
         }
