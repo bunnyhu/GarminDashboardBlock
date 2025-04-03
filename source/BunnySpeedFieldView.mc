@@ -7,11 +7,13 @@ import Toybox.Sensor;
 import Toybox.Ant;
 import Toybox.AntPlus;
 
-/*
-    Radar event listener
+/*!
+ * Radar event listener
 */
 class MyBikeRadarListener extends AntPlus.BikeRadarListener {
+    //! RadarTarget array
     var targets = null;
+    //! The fastest car speed
     var maxSpeed = 0f;
 
     function initialize() {
@@ -34,11 +36,11 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
 
 
 /*
-    Bunny's extended speed datafield for Garmin Edge
+    Bunny's extended speed dashboard for Garmin Edge
 
     @author Karoly Szabo (Bunny)
     @version 1.0.4
-    @link https://github.com/bunnyhu/ExtendedSpeedField
+    @link https://github.com/bunnyhu/GarminDashboardBlock
 
     @note FONT_MEDIUM = garmin label, FONT_NUMBER_MEDIUM = garmin 2 lines num, FONT_NUMBER_HOT = garmin 1 line num
 */
