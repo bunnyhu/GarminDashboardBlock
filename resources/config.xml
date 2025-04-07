@@ -1,5 +1,5 @@
 <resources>
-    <string id="AppName" translatable="false">Bunny`s extended Speed</string>
+    <string id="AppName" translatable="false">Bunny`s dashboard block</string>
     <font id="largeSpeedFont" filename="fonts/garminrobo-56.fnt" filter="()-.:0123456789"  antialias="true"/>
     <font id="mediumNumFont" filename="fonts/garminrobo-32.fnt" filter="[](),-.:0123456789"  antialias="true"/>
     <font id="smallNumFont" filename="fonts/garminrobo-22.fnt" filter="[](),-.:0123456789"  antialias="true"/>

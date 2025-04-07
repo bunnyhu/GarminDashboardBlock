@@ -40,7 +40,7 @@ Edge Explore 2 , Edge 1040/1040 solar
 * If we have radar and wehicle(s) arriving, it show the fastest one's speed. If the speed moderate the number in a green circle, the ok speed means yellow and the fast one with red circle. After the wehicle pass, we turn back to compass.
 
 ## Install from Garmin store
-https://apps.garmin.com/
+https://apps.garmin.com/en-US/apps/bf65ec33-0655-485c-83eb-bdecebcd23d4
 
 ## Manual install
 * Download the latest version from Github Releases section and unpack it. https://github.com/bunnyhu/GarminDashboardBlock/releases
