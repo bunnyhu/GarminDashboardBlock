@@ -39,7 +39,7 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
     Bunny's extended speed dashboard for Garmin Edge
 
     @author Karoly Szabo (Bunny)
-    @version 1.0.4
+    @version 1.0.5
     @link https://github.com/bunnyhu/GarminDashboardBlock
 
     @note FONT_MEDIUM = garmin label, FONT_NUMBER_MEDIUM = garmin 2 lines num, FONT_NUMBER_HOT = garmin 1 line num
@@ -70,6 +70,17 @@ class BunnySpeedFieldView extends WatchUi.DataField {
 
     // current speed is [ok, little slow, real slow]
     private var speedColors = [Graphics.COLOR_DK_GREEN, Graphics.COLOR_YELLOW, Graphics.COLOR_RED];
+    // colors for day/dark mode
+    private var baseColors = {
+        :sunNumColor => Graphics.COLOR_BLACK,
+        :sunLabelColor => 0x777777,         // Graphics.COLOR_DK_GRAY,
+        :sunSpeedColors  => [Graphics.COLOR_DK_GREEN, Graphics.COLOR_YELLOW, Graphics.COLOR_RED],
+
+        :darkNumColor => Graphics.COLOR_WHITE,
+        :darkLabelColor => 0x999999,
+        :darkSpeedColors => [Graphics.COLOR_GREEN, Graphics.COLOR_YELLOW, Graphics.COLOR_RED],
+
+    };
 
     private var _gradientData = [       // slope
         0f,    // 0. Altitude last estimate
@@ -235,12 +246,14 @@ class BunnySpeedFieldView extends WatchUi.DataField {
 
         if (getBackgroundColor() == Graphics.COLOR_BLACK) {
             _darkMode = true;
-            numColor = Graphics.COLOR_WHITE;
-            labelColor = Graphics.COLOR_DK_GRAY;
+            numColor = baseColors[:darkNumColor]; // Graphics.COLOR_WHITE
+            labelColor = baseColors[:darkLabelColor]; // Graphics.COLOR_DK_GRAY
+            speedColors = baseColors[:darkSpeedColors];
         } else {
             _darkMode = false;
-            numColor = Graphics.COLOR_BLACK;
-            labelColor = Graphics.COLOR_LT_GRAY;
+            numColor = baseColors[:sunNumColor]; // Graphics.COLOR_BLACK
+            labelColor = baseColors[:sunLabelColor]; // Graphics.COLOR_LT_GRAY;
+            speedColors = baseColors[:sunSpeedColors];
         }
         (View.findDrawableById("Background") as Text).setColor(getBackgroundColor());
 
