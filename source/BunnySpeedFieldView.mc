@@ -6,6 +6,7 @@ import Toybox.Graphics;
 import Toybox.Sensor;
 import Toybox.Ant;
 import Toybox.AntPlus;
+import Toybox.Time;
 
 /*!
  * Radar event listener
@@ -15,6 +16,8 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
     var targets = null;
     //! The fastest car speed
     var maxSpeed = 0f;
+    //! Last update timestamp
+    var lastUpdate = null;
 
     function initialize() {
         BikeRadarListener.initialize();
@@ -30,6 +33,15 @@ class MyBikeRadarListener extends AntPlus.BikeRadarListener {
             } else if (data[f].speed > maxSpeed) {
                 maxSpeed = data[f].speed;
             }
+        }
+        lastUpdate = Time.now().value();
+    }
+
+    function getDataAge() as Integer {
+        if (lastUpdate == null) {
+            return 0x7FFFFFF;
+        } else {
+            return  Time.now().value() - lastUpdate;
         }
     }
 }
@@ -55,7 +67,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _sensors;           // All sensors data, always read from this
 
     private var _radarListener;
-    private var _radar = null;    
+    private var _radar = null;
     private const radarDangerLimits = [45, 60]; // max radar speed for circle color [green, yellow ]
 
     private var _colorDataText as Array = [     // standard data color
@@ -115,11 +127,11 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             :carDanger   => 0,
             :windDir     => null,
             :windSpeed   => null,
-        };        
+        };
     }
 
     function initialize() {
-        DataField.initialize();        
+        DataField.initialize();
         resetSensors();
         _gradientData[11] = true;   // Enable slope
         _padding = new Align();
@@ -142,10 +154,10 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     */
     function onLayout(dc as Dc) as Void {
         var screenWidth = System.getDeviceSettings().screenWidth;
-        var screenHeight = System.getDeviceSettings().screenHeight;        
+        var screenHeight = System.getDeviceSettings().screenHeight;
         var fieldWidth = dc.getWidth();
         var fieldHeight = dc.getHeight();
-        
+
         if (fieldWidth >= (screenWidth/2) ) {
             if (fieldHeight>=(screenHeight/2)) {
                 View.setLayout(Rez.Layouts.layout2x2(dc));
@@ -170,18 +182,41 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         setDrawableText("cadLabel", WatchUi.loadResource(Rez.Strings.cadenceLabel) as String);
         setDrawableText("distanceIcon", _units[2]);
         setDrawableText("speedIcon", _units[3]);
-        
+
         // realign all text where need
         for (var f=0; f<_alignText.size(); f++) {
             var elem = findDrawableById(_alignText[f]) as Text;
             if (elem != null) {
                 _padding.reAlign(elem);
             }
-        } 
+        }
     }
 
 
-    /* 
+    function updateRadar() as Void {
+        var radarDataAge = _radarListener.getDataAge();
+        if (_radarListener.maxSpeed <= 0 || radarDataAge >= 30) {
+            _sensors[:carSpeed] = 0;
+            return;
+        }
+
+        _sensors[:carRelSpeed] = Math.round(_radarListener.maxSpeed * _speedMod);
+        _sensors[:carSpeed] = Math.round(_sensors[:carRelSpeed] + _sensors[:speed]);
+
+
+        if (radarDataAge > 10) {
+            _sensors[:carDanger] = 0; //unknown, data not recent
+        } else if ( _sensors[:carSpeed] <= (radarDangerLimits[0] / 3.6) * _speedMod   ) {
+            _sensors[:carDanger] = 1;
+        } else if ( _sensors[:carSpeed] <= (radarDangerLimits[1] / 3.6) * _speedMod  ) {
+            _sensors[:carDanger] = 2;
+        } else {
+            _sensors[:carDanger] = 3;
+        }
+    }
+
+
+    /*
         update class var with fresh data like every second
     */
     function compute(info as Activity.Info) as Void {
@@ -217,19 +252,11 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         }
         _sensors[:slope] = computeGradient(info);
 
-        if ((_radarListener != null) && _radarListener.maxSpeed>0) {
-            _sensors[:carRelSpeed] = Math.round(_radarListener.maxSpeed * _speedMod);
-            _sensors[:carSpeed] = Math.round(_sensors[:carRelSpeed] + _sensors[:speed]);
-            if ( _sensors[:carSpeed] <= (radarDangerLimits[0] / 3.6)* _speedMod   ) {
-                _sensors[:carDanger] = 1;
-            } else if ( _sensors[:carSpeed] <= (radarDangerLimits[1] / 3.6)* _speedMod  ) {
-                _sensors[:carDanger] = 2;
-            } else {
-                _sensors[:carDanger] = 3;
-            }
+        if (_radarListener != null) {
+            updateRadar();
         }
 
-        if (_weather.get(info)) {            
+        if (_weather.get(info)) {
             var wind = _weather.getWind();
             _sensors[:windDir] = wind[:dir];
             _sensors[:windSpeed] = wind[:speed];
@@ -239,7 +266,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
 
     /*
         update screen every second if datafield visible
-    */    
+    */
     function onUpdate(dc as Dc) as Void {
         var numColor;
         var labelColor;
@@ -266,13 +293,13 @@ class BunnySpeedFieldView extends WatchUi.DataField {
                     elem.setColor(colors[c][1]);
                 }
             }
-        }        
+        }
         drawSpeed(numColor);
         if (_sensors[:avgSpeed] < 100) {
             setDrawableText("avgSpeed", _sensors[:avgSpeed].format("%0.1f"));
         } else {
             setDrawableText("avgSpeed", Math.round(_sensors[:avgSpeed]).format("%0.0f"));
-        }        
+        }
         setDrawableText("cadence", formatCadence());
         setDrawableText("distance", formatDistance(_sensors[:distance]));
         setDrawableText("timer", formatTime(_sensors[:timer]));
@@ -291,7 +318,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             setDrawableText("slope", _sensors[:slope].format("%0.1f"));
         }
         setDrawableText("hrNum", _sensors[:hr].format("%u"));
-        
+
         if (View.findDrawableById("pulseBar") != null) {
             (View.findDrawableById("pulseBar") as HRZoneBar).setOptions({
                 :hr => _sensors[:hr],
@@ -315,7 +342,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
                 spdColor = speedColors[0];
                 deltaDot = "(";     // UP
             } else if (deltaSpd > -1) {
-                spdColor = speedColors[1];                
+                spdColor = speedColors[1];
                 deltaDot = ")";     // DOWN
             } else {
                 spdColor = speedColors[2];
@@ -361,7 +388,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     }
 
 
-    /* 
+    /*
         dinamic time formatting [h:]mm:ss
     */
     function formatTime(seconds) as String {
@@ -450,7 +477,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         gradientData[index + 2] = 1f /* Max process noise */ / (1f + diffEstimate * diffEstimate); // Update process noise
         gradientData[index] = currentEstimate; // Update last estimate
         return currentEstimate;
-    }    
+    }
 
 
     /*
@@ -460,6 +487,6 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         var elem = View.findDrawableById(pId) as Text;
         if (elem != null) {
             elem.setText(pValue);
-        }                
+        }
     }
 }
