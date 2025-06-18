@@ -31,9 +31,9 @@ class Background extends WatchUi.Drawable {
 }
 
 /*  *************************************************************
-    Combined compass and radar speed indicator   
+    Combined compass and radar speed indicator
     *************************************************************   */
-class RadarCompass extends WatchUi.Drawable {  
+class RadarCompass extends WatchUi.Drawable {
     private var _fontCompIcon;      // compass icons font
     private var _fontSpeedNumber;   // wehicle speed number font
     private var _align;             // device related text align class
@@ -130,13 +130,13 @@ class RadarCompass extends WatchUi.Drawable {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
         dc.fillCircle(locX+17, locY+30, baseRadarRadius);
         if (sensors[:carDanger] == 1) {
-            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_WHITE);    
+            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_WHITE);
         } else if (sensors[:carDanger] == 2) {
-            dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_WHITE);    
+            dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_WHITE);
         } else {
             dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_WHITE);
         }
-        dc.setPenWidth(8);        
+        dc.setPenWidth(8);
         dc.drawCircle(locX+17, locY+30, baseRadarRadius);
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(locX + 17, locY+18, _fontSpeedNumber, sensors[:carSpeed].format("%u"), Graphics.TEXT_JUSTIFY_CENTER);
@@ -147,7 +147,13 @@ class RadarCompass extends WatchUi.Drawable {
         Draw wind direction supported headind up moving north compass
     */
     function drawCompass(dc as Dc) as Void {
-        label = _directionTexts[getDirection(sensors[:heading])];
+        var direction = sensors[:heading];
+
+        if (sensors[:track] != null) {
+            direction = sensors[:track];
+        }
+
+        label = _directionTexts[getDirection(direction)];
 
         // white bg stroke circle area
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
@@ -160,7 +166,7 @@ class RadarCompass extends WatchUi.Drawable {
 
         if (sensors[:windDir] != null) {
             // We have wind info, let show its direction on circle with arc
-            var windArc = getWindArc(sensors[:windDir], sensors[:heading]);
+            var windArc = getWindArc(sensors[:windDir], direction);
             dc.setPenWidth(2);
             dc.drawArc(locX+19, locY+20+baseCompassRadius, baseCompassRadius, Graphics.ARC_CLOCKWISE , windArc[:cb], windArc[:ce]);
             dc.setPenWidth(10);
@@ -175,8 +181,8 @@ class RadarCompass extends WatchUi.Drawable {
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(locX + 19, locY-_labelOffset, Graphics.FONT_MEDIUM, label, Graphics.TEXT_JUSTIFY_CENTER);
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(locX+19, locY+baseCompassRadius, _fontCompIcon, getDirection(sensors[:heading]).format("%1u"), Graphics.TEXT_JUSTIFY_CENTER);
-    }    
+        dc.drawText(locX+19, locY+baseCompassRadius, _fontCompIcon, getDirection(direction).format("%1u"), Graphics.TEXT_JUSTIFY_CENTER);
+    }
 }
 
 
@@ -198,7 +204,7 @@ class HRZoneBar extends WatchUi.Drawable {
         _hrZones = UserProfile.getHeartRateZones(UserProfile.getCurrentSport());
         if (_hrZones.size() != 6 ) {
             _hrZones = [1,2,3,4,5,6];
-        }        
+        }
         // _hrPixel =  90 / (_hrZones[5]-_hrZones[0]).toFloat();
         _hrPixel =  75 / (_hrZones[5]-_hrZones[2]).toFloat();
         _imgVRainbowBar = Application.loadResource( Rez.Drawables.imageVRainbowBar ) as BitmapResource;
@@ -217,7 +223,7 @@ class HRZoneBar extends WatchUi.Drawable {
 
     /*  *************************************************************
     */
-    function getZone(_hr) as Number {        
+    function getZone(_hr) as Number {
         for (var f=0; f<=4; f++) {
             if ((_hr>=_hrZones[f]) && (_hr<=_hrZones[f+1])) {
                 return f;
@@ -240,14 +246,14 @@ class HRZoneBar extends WatchUi.Drawable {
         if (_hr > _hrZones[5]) {
             _hr = _hrZones[5];
         } else if (_hr < _hrZones[2]) {
-            _hr = _hrZones[2];               
+            _hr = _hrZones[2];
         }
 
         var ZoneClear = [2,2,2,1,0,0];
         dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
         dc.drawBitmap(locX, locY+23, _imgVRainbowBar);
-        // dc.fillRectangle(locX, locY+23, 15, Math.floor(_hrPixel * (_hrZones[5] - hr) ));        
-        dc.fillRectangle(locX, locY+23, 15, Math.floor(ZoneClear[getZone(_hr)]*25));        
+        // dc.fillRectangle(locX, locY+23, 15, Math.floor(_hrPixel * (_hrZones[5] - hr) ));
+        dc.fillRectangle(locX, locY+23, 15, Math.floor(ZoneClear[getZone(_hr)]*25));
 
         var y = Math.floor(_hrPixel * (_hrZones[5] - _hr) );
         if (y>70) {

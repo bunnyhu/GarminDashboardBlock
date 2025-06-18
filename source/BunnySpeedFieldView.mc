@@ -55,7 +55,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     private var _sensors;           // All sensors data, always read from this
 
     private var _radarListener;
-    private var _radar = null;    
+    private var _radar = null;
     private const radarDangerLimits = [45, 60]; // max radar speed for circle color [green, yellow ]
 
     private var _colorDataText as Array = [     // standard data color
@@ -109,17 +109,18 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             :cadence     => 0,
             :avgCadence  => 0,
             :heading     => 0.0f,
+            :track       => null,
             :hr          => 0,
             :carSpeed    => 0,
             :carRelSpeed => 0,
             :carDanger   => 0,
             :windDir     => null,
             :windSpeed   => null,
-        };        
+        };
     }
 
     function initialize() {
-        DataField.initialize();        
+        DataField.initialize();
         resetSensors();
         _gradientData[11] = true;   // Enable slope
         _padding = new Align();
@@ -142,10 +143,10 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     */
     function onLayout(dc as Dc) as Void {
         var screenWidth = System.getDeviceSettings().screenWidth;
-        var screenHeight = System.getDeviceSettings().screenHeight;        
+        var screenHeight = System.getDeviceSettings().screenHeight;
         var fieldWidth = dc.getWidth();
         var fieldHeight = dc.getHeight();
-        
+
         if (fieldWidth >= (screenWidth/2) ) {
             if (fieldHeight>=(screenHeight/2)) {
                 View.setLayout(Rez.Layouts.layout2x2(dc));
@@ -170,18 +171,18 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         setDrawableText("cadLabel", WatchUi.loadResource(Rez.Strings.cadenceLabel) as String);
         setDrawableText("distanceIcon", _units[2]);
         setDrawableText("speedIcon", _units[3]);
-        
+
         // realign all text where need
         for (var f=0; f<_alignText.size(); f++) {
             var elem = findDrawableById(_alignText[f]) as Text;
             if (elem != null) {
                 _padding.reAlign(elem);
             }
-        } 
+        }
     }
 
 
-    /* 
+    /*
         update class var with fresh data like every second
     */
     function compute(info as Activity.Info) as Void {
@@ -211,7 +212,10 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         if (info.currentHeartRate != null) {
             _sensors[:hr] = info.currentHeartRate;
         }
-        if (info.currentHeading != null) {
+
+        if (info.track != null) {
+            _sensors[:track] = (info.track < 0) ? 360.0 + Math.toDegrees(info.track) : Math.toDegrees(info.track);
+        } else if (info.currentHeading != null) {
             // 0 is north. -PI/2 radians (90deg CCW) is west, and +PI/2 radians (90deg CW) is east.
             _sensors[:heading] = (info.currentHeading < 0) ? 360.0 + Math.toDegrees(info.currentHeading) : Math.toDegrees(info.currentHeading);
         }
@@ -229,7 +233,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             }
         }
 
-        if (_weather.get(info)) {            
+        if (_weather.get(info)) {
             var wind = _weather.getWind();
             _sensors[:windDir] = wind[:dir];
             _sensors[:windSpeed] = wind[:speed];
@@ -239,7 +243,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
 
     /*
         update screen every second if datafield visible
-    */    
+    */
     function onUpdate(dc as Dc) as Void {
         var numColor;
         var labelColor;
@@ -266,13 +270,13 @@ class BunnySpeedFieldView extends WatchUi.DataField {
                     elem.setColor(colors[c][1]);
                 }
             }
-        }        
+        }
         drawSpeed(numColor);
         if (_sensors[:avgSpeed] < 100) {
             setDrawableText("avgSpeed", _sensors[:avgSpeed].format("%0.1f"));
         } else {
             setDrawableText("avgSpeed", Math.round(_sensors[:avgSpeed]).format("%0.0f"));
-        }        
+        }
         setDrawableText("cadence", formatCadence());
         setDrawableText("distance", formatDistance(_sensors[:distance]));
         setDrawableText("timer", formatTime(_sensors[:timer]));
@@ -291,7 +295,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
             setDrawableText("slope", _sensors[:slope].format("%0.1f"));
         }
         setDrawableText("hrNum", _sensors[:hr].format("%u"));
-        
+
         if (View.findDrawableById("pulseBar") != null) {
             (View.findDrawableById("pulseBar") as HRZoneBar).setOptions({
                 :hr => _sensors[:hr],
@@ -315,7 +319,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
                 spdColor = speedColors[0];
                 deltaDot = "(";     // UP
             } else if (deltaSpd > -1) {
-                spdColor = speedColors[1];                
+                spdColor = speedColors[1];
                 deltaDot = ")";     // DOWN
             } else {
                 spdColor = speedColors[2];
@@ -361,7 +365,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
     }
 
 
-    /* 
+    /*
         dinamic time formatting [h:]mm:ss
     */
     function formatTime(seconds) as String {
@@ -450,7 +454,7 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         gradientData[index + 2] = 1f /* Max process noise */ / (1f + diffEstimate * diffEstimate); // Update process noise
         gradientData[index] = currentEstimate; // Update last estimate
         return currentEstimate;
-    }    
+    }
 
 
     /*
@@ -460,6 +464,6 @@ class BunnySpeedFieldView extends WatchUi.DataField {
         var elem = View.findDrawableById(pId) as Text;
         if (elem != null) {
             elem.setText(pValue);
-        }                
+        }
     }
 }
