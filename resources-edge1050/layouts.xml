@@ -1,0 +1,68 @@
+<!-- Edge 1050 480x800 -->
+<layouts>
+    <layout id="layout2x2">
+        <!-- 480 x 316 (240x156) -->
+        <drawable class="Background" />
+        <label id="fieldLabel" x="center" y="4" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_SMALL"/>
+        <label id="avgSpLabel" x="10" y="200" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_SMALL"/>
+        <label id="cadLabel" x="430" y="200" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="Graphics.FONT_SMALL"/>
+        <label id="cadenceIcon" x="470" y="185" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="A"/>
+        <label id="speed" x="center" y="0" justification="Graphics.TEXT_JUSTIFY_CENTER" font="@Fonts.largeSpeedFont" />
+        <label id="avgSpeed" x="5" y="240" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.mediumNumFont"/>
+        <label id="cadence" x="470" y="240" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.mediumNumFont"/>
+        <label id="slopeIcon" x="470" y="-4" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="G"/>
+        <label id="slope" x="470" y="50"  justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="hrNum" x="2" y="4" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_MEDIUM"/>
+        <drawable class="HRZoneBar" id="pulseBar">
+            <param name="locX">1</param>
+            <param name="locY">35</param>
+            <param name="width">30</param>
+            <param name="height">150</param>
+            <param name="arrowSize">20</param>
+        </drawable>
+        <drawable id="w_compass" class="WindCompass">
+            <param name="locX">240</param>
+            <param name="locY">260</param>
+            <param name="height">60</param>
+            <param name="radarROffset">7</param>
+            <param name="showCompass">true</param>
+            <param name="radarPen">8</param>
+            <param name="compassFont">Graphics.FONT_MEDIUM</param>
+            <param name="radarFont">Graphics.FONT_LARGE</param>
+            <param name="radarFontYOffset">10</param>
+        </drawable>
+    </layout>
+    <layout id="layout2x1">
+        <!-- 480 x 158 (240x78) -->
+        <drawable class="Background" />
+        <label id="speed" x="5" y="5" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.mediumNumFont"/>
+        <label id="slopeIcon" x="5" y="100" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.bikeDataIconFont" text="G" />
+        <label id="slope" x="50" y="100" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.smallNumFont"/>
+        <label id="distance" x="430" y="2" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="timer" x="430" y="54" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="cadence" x="430" y="106" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="distanceIcon" x="475" y="0" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="C"/>
+        <label id="timerIcon" x="475" y="60" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="B"/>
+        <label id="cadenceIcon" x="475" y="110" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="A"/>
+        <drawable id="w_compass" class="WindCompass">
+            <param name="locX">240</param>
+            <param name="locY">100</param>
+            <param name="height">60</param>
+            <param name="radarROffset">7</param>
+            <param name="showCompass">false</param>
+            <param name="radarPen">8</param>
+            <param name="radarFont">Graphics.FONT_LARGE</param>
+            <param name="radarFontYOffset">10</param>
+        </drawable>
+    </layout>
+    <layout id="layout1x1">
+        <!-- 239 x 158 (119x78) -->
+        <drawable class="Background" />
+        <label id="speedIcon" x="230" y="4" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="D"/>
+        <label id="distanceIcon" x="230" y="55" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="C"/>
+        <label id="timerIcon" x="230" y="110" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="B"/>
+        <label id="speed" x="190" y="2" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="distance" x="190" y="54" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+        <label id="timer" x="190" y="106" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
+    </layout>
+</layouts>

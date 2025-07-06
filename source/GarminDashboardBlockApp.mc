@@ -2,7 +2,7 @@ import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-class BunnySpeedFieldApp extends Application.AppBase {
+class GarminDashboardBlockApp extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
@@ -18,11 +18,11 @@ class BunnySpeedFieldApp extends Application.AppBase {
 
     //! Return the initial view of your application here
     function getInitialView() as [Views] or [Views, InputDelegates] {
-        return [ new BunnySpeedFieldView() ];
+        return [ new GarminDashboardBlockView() ];
     }
 
 }
 
-function getApp() as BunnySpeedFieldApp {
-    return Application.getApp() as BunnySpeedFieldApp;
+function getApp() as GarminDashboardBlockApp {
+    return Application.getApp() as GarminDashboardBlockApp;
 }

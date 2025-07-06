@@ -1,5 +1,5 @@
 project.manifest = manifest.xml
 
-# Eszközön s, szimuban d
+# on device: s, in simulator: d
 excludeBase=d
-base.excludeAnnotations = $(excludeBase) 
+base.excludeAnnotations = $(excludeBase)

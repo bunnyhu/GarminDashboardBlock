@@ -1,7 +1,7 @@
 <!-- Edge 1040 282x470 -->
-<layouts>    
+<layouts>
     <layout id="layout2x2">
-        <!-- 240x156 - 282x184 -->
+        <!-- 282x184 (240x156) -->
         <drawable class="Background" />
         <label id="fieldLabel" x="center" y="10" justification="Graphics.TEXT_JUSTIFY_CENTER" font="Graphics.FONT_SMALL"/>
         <label id="avgSpLabel" x="20" y="122" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_SMALL"/>
@@ -15,35 +15,53 @@
         <label id="hrNum" x="15" y="10" justification="Graphics.TEXT_JUSTIFY_LEFT" font="Graphics.FONT_MEDIUM"/>
         <drawable class="HRZoneBar" id="pulseBar">
             <param name="locX">20</param>
-            <param name="locY">5</param>
+            <param name="locY">30</param>
+            <param name="width">15</param>
+            <param name="height">75</param>
+            <param name="arrowSize">10</param>
         </drawable>
-        <drawable class="RadarCompass" id="multiCompass">
-            <param name="locX">122</param>
-            <param name="locY">115</param>
+        <drawable id="w_compass" class="WindCompass">
+            <param name="locX">147</param>
+            <param name="locY">155</param>
+            <param name="height">30</param>
+            <param name="radarROffset">7</param>
+            <param name="showCompass">true</param>
+            <param name="radarPen">8</param>
+            <param name="compassFont">Graphics.FONT_MEDIUM</param>
+            <param name="radarFontYOffset">0</param>
         </drawable>
     </layout>
     <layout id="layout2x1">
-        <!-- 240x78 - 282x92 -->
+        <!-- 282x92 (240x78) -->
         <drawable class="Background" />
         <label id="speed" x="20" y="5" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.mediumNumFont"/>
         <label id="slopeIcon" x="20" y="58" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.bikeDataIconFont" text="G" />
         <label id="slope" x="45" y="60" justification="Graphics.TEXT_JUSTIFY_LEFT" font="@Fonts.smallNumFont"/>
-        <label id="distance" x="240" y="5" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>        
+        <label id="distance" x="240" y="5" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
         <label id="timer" x="240" y="33" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
         <label id="cadence" x="240" y="60" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
         <label id="distanceIcon" x="262" y="5" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="C"/>
         <label id="timerIcon" x="262" y="33" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="B"/>
         <label id="cadenceIcon" x="262" y="60" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="A"/>
+        <drawable id="w_compass" class="WindCompass">
+            <param name="locX">125</param>
+            <param name="locY">60</param>
+            <param name="height">30</param>
+            <param name="radarROffset">7</param>
+            <param name="showCompass">false</param>
+            <param name="radarPen">8</param>
+            <param name="radarFontYOffset">0</param>
+        </drawable>
+
     </layout>
     <layout id="layout1x1">
-        <!-- 119x78 - 140x92 -->
+        <!-- 140x92 (119x78) -->
         <drawable class="Background" />
         <label id="speedIcon" x="120" y="5" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="D"/>
         <label id="distanceIcon" x="120" y="33" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="C"/>
         <label id="timerIcon" x="120" y="60" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.bikeDataIconFont" text="B"/>
         <label id="speed" x="103" y="5" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
-        <label id="distance" x="103" y="33" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>        
+        <label id="distance" x="103" y="33" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
         <label id="timer" x="103" y="60" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
     </layout>
 </layouts>
-<!-- Edge 1050 480x800 -->

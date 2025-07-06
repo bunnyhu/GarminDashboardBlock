@@ -1,0 +1,22 @@
+info face="Garmin Robo Units" size=-175 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=2 padding=0,0,0,0 spacing=1,1 outline=0
+common lineHeight=211 base=167 scaleW=512 scaleH=512 pages=1 packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="garminrobo-130.png"
+chars count=18
+char id=44   x=384   y=128   width=30    height=53    xoffset=3     yoffset=145   xadvance=42    page=0  chnl=15
+char id=45   x=444   y=126   width=48    height=21    xoffset=9     yoffset=103   xadvance=68    page=0  chnl=15
+char id=46   x=415   y=128   width=28    height=26    xoffset=11    yoffset=142   xadvance=51    page=0  chnl=15
+char id=48   x=174   y=0     width=84    height=127   xoffset=8     yoffset=41    xadvance=100   page=0  chnl=15
+char id=49   x=429   y=0     width=54    height=125   xoffset=14    yoffset=42    xadvance=100   page=0  chnl=15
+char id=50   x=0     y=128   width=88    height=126   xoffset=6     yoffset=41    xadvance=100   page=0  chnl=15
+char id=51   x=0     y=0     width=86    height=127   xoffset=6     yoffset=41    xadvance=100   page=0  chnl=15
+char id=52   x=174   y=128   width=91    height=125   xoffset=5     yoffset=42    xadvance=100   page=0  chnl=15
+char id=53   x=89    y=128   width=84    height=126   xoffset=9     yoffset=42    xadvance=100   page=0  chnl=15
+char id=54   x=87    y=0     width=86    height=127   xoffset=9     yoffset=41    xadvance=100   page=0  chnl=15
+char id=55   x=266   y=128   width=88    height=125   xoffset=5     yoffset=42    xadvance=100   page=0  chnl=15
+char id=56   x=259   y=0     width=84    height=127   xoffset=8     yoffset=41    xadvance=100   page=0  chnl=15
+char id=57   x=344   y=0     width=84    height=127   xoffset=7     yoffset=41    xadvance=100   page=0  chnl=15
+char id=58   x=355   y=128   width=28    height=96    xoffset=11    yoffset=72    xadvance=49    page=0  chnl=15
+char id=40   x=444   y=151     width=36    height=31   xoffset=2    yoffset=135   xadvance=38   page=0  chnl=15
+char id=41   x=444   y=184     width=36    height=31   xoffset=2    yoffset=135   xadvance=38   page=0  chnl=15
+char id=91   x=444   y=151     width=36    height=31   xoffset=2    yoffset=5     xadvance=38   page=0  chnl=15
+char id=93   x=444   y=184     width=36    height=31   xoffset=2    yoffset=135   xadvance=38   page=0  chnl=15
