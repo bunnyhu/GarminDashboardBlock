@@ -250,7 +250,8 @@ class GarminDashboardBlockView extends WatchUi.DataField {
             updateRadar();
         }
 
-        // ! Fake radar for testing
+        //! Fake radar for testing
+
         // _sensors[:carRelSpeed] = 75;
         // _sensors[:carSpeed] = 95;
         // _sensors[:carDanger] = 3;

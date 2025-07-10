@@ -26,7 +26,7 @@
             <param name="height">60</param>
             <param name="radarROffset">7</param>
             <param name="showCompass">true</param>
-            <param name="radarPen">8</param>
+            <param name="radarPen">15</param>
             <param name="compassFont">Graphics.FONT_MEDIUM</param>
             <param name="radarFont">Graphics.FONT_LARGE</param>
             <param name="radarFontYOffset">10</param>
@@ -50,7 +50,7 @@
             <param name="height">60</param>
             <param name="radarROffset">7</param>
             <param name="showCompass">false</param>
-            <param name="radarPen">8</param>
+            <param name="radarPen">15</param>
             <param name="radarFont">Graphics.FONT_LARGE</param>
             <param name="radarFontYOffset">10</param>
         </drawable>

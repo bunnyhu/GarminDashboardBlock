@@ -10,8 +10,9 @@ This is a garmin Edge cycling computer data field. Its purpose is to display mor
 My data field displays 3 sizes of slightly different data, adapted to my own needs. The 2x2 big size is my main choice, the 2x1 line I use under the map, and the 1x1 is just why not make it.
 
 ## Supported devices
+Edge Explore 2 , Edge 1040, Edge 1050
 
-Edge Explore 2 , Edge 1040/1040 solar, Edge 1050/1050 solar (tested only in emulator, experimental)
+*Some screen layout slightly smaller than other similar and the datafield not fit in. Because I using many information, I fit my datafield for the normal size. If it is looks oversized, please try to use it in a different layout. Problematic layout maybe the 3 and 4 for my 2x2 size datafield.*
 
 ## Adapted data
 
@@ -52,6 +53,7 @@ https://apps.garmin.com/en-US/apps/bf65ec33-0655-485c-83eb-bdecebcd23d4
 https://github.com/bunnyhu/GarminDashboardBlock
 
 ## History
-* v1.1.0  - Edge 1050 support, precise compass and HRZ bar, add radar speed to 2x1 size, average speed indicator 2025.07.06
+* v1.1.1  - Edge 1050 small improvements 2025. jul 10.
+* v1.1.0  - Edge 1050 support, precise compass and HRZ bar, add radar speed to 2x1 size, average speed indicator 2025. jul 6.
 * v1.0.5  - Color correction  2025. maj 1.
 * v1.0.4  - Initial release   2025. april 3.

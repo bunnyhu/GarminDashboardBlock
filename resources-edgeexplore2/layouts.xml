@@ -64,4 +64,3 @@
         <label id="timer" x="100" y="51" justification="Graphics.TEXT_JUSTIFY_RIGHT" font="@Fonts.smallNumFont"/>
     </layout>
 </layouts>
-<!-- Edge 1050 480x800 -->
