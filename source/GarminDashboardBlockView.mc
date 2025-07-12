@@ -300,7 +300,7 @@ class GarminDashboardBlockView extends WatchUi.DataField {
 
         if (_layout.equals("2x2")) {
             setDrawableText("slope", Math.round(_sensors[:slope]).format("%0.0f"));
-        } else if (_layout.equals("2x1")) {
+        } else {    // if (_layout.equals("2x1"))
             setDrawableText("slope", _sensors[:slope].format("%0.1f"));
         }
         setDrawableText("hrNum", _sensors[:hr].format("%u"));

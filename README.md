@@ -1,5 +1,4 @@
-
- # Bunny's dashboard block
+# Bunny's dashboard block
 ![GitHub Release](https://img.shields.io/github/v/release/bunnyhu/GarminDashboardBlock)
 ![GitHub Release Date](https://img.shields.io/github/release-date/bunnyhu/GarminDashboardBlock)
 
@@ -9,25 +8,32 @@ This is a garmin Edge cycling computer data field. Its purpose is to display mor
 
 My data field displays 3 sizes of slightly different data, adapted to my own needs. The 2x2 big size is my main choice, the 2x1 line I use under the map, and the 1x1 is just why not make it.
 
-## Supported devices
+## Supported and tested devices
 Edge Explore 2 , Edge 1040, Edge 1050
 
-*Some screen layout slightly smaller than other similar and the datafield not fit in. Because I using many information, I fit my datafield for the normal size. If it is looks oversized, please try to use it in a different layout. Problematic layout maybe the 3 and 4 for my 2x2 size datafield.*
+## Supported, but not tested devices
+Edge 540, Edge 840, Edge MTB
+
+*On the Edge 540/840/MTB the 1x1 and 2x1 size is limited for two dataline.*
+
+*Some screen layout slightly smaller than other similar and the datafield not fit in. I fit my datafield for the common size. If it is looks oversized, please try to use it in a different layout. Problematic layout maybe the 3 and 4 for my 2x2 size datafield.*
 
 ## Adapted data
 
 | Data | Comment | 2x2 | 2x1 | 1x1 |
 | --- | --- | --- | --- | --- |
-| current speed | with color support (see below) | X | X | X |
+| current speed | with color support (see below) | X | X* | X* |
 | average speed | | X | | |
-| current cadence | | X | X | |
-| climb % | negative if slope | X | X | |
+| current cadence | | X | X* | |
+| climb % | negative if slope | X | X | X* |
 | heart rate & zones | colorized bar | X | | |
 | compass | (see below) | X | | |
 | wind direction | included into compass | X | | |
 | radar speed | with color support | X | X | |
-| distance travelled | | | X | X |
-| moving time | | | X | X |
+| distance travelled | | | X | X* |
+| moving time | | | X | X* |
+
+*The * means that data is not avaiable on every device.*
 
 ### Enhanced data fields
 
@@ -53,6 +59,7 @@ https://apps.garmin.com/en-US/apps/bf65ec33-0655-485c-83eb-bdecebcd23d4
 https://github.com/bunnyhu/GarminDashboardBlock
 
 ## History
+* v1.2.0  - Edge 540, 840, MTB support. 2025. jul 12.
 * v1.1.1  - Edge 1050 small improvements 2025. jul 10.
 * v1.1.0  - Edge 1050 support, precise compass and HRZ bar, add radar speed to 2x1 size, average speed indicator 2025. jul 6.
 * v1.0.5  - Color correction  2025. maj 1.
